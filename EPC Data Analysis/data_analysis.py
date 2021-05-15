@@ -1,8 +1,11 @@
 import pandas as pd
 from collections import Counter
+import csv
+import re
 
 global_current_rating = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0, "INVALID!": 0}
 global_potential_rating = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0, "INVALID!": 0}
+values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'INVALID!']
 
 # list_of_files = ["testcerts1.csv", "testcerts2.csv"]
 
@@ -357,6 +360,9 @@ list_of_files = [
 verbose = False
 
 def aggregate_data(df):
+	'''
+	Aggregates all the data and gives number of homes in each ratings band
+	'''
 
 	verbose and print(df)
 
@@ -373,24 +379,68 @@ def aggregate_data(df):
 	global global_potential_rating
 	Cdict_potential = Counter(global_potential_rating) + Counter(potential_rating)
 	global_potential_rating = dict(Cdict_potential)
-	return
+
+def aggregate_data_geographically(df, current_writer, potential_writer, filename):
+	'''
+	Aggregates data by location and creates CSV files with energy ratings data by location
+	'''
+	current_rating = df['CURRENT_ENERGY_RATING'].value_counts().to_dict()
+	potential_rating = df['POTENTIAL_ENERGY_RATING'].value_counts().to_dict()
+
+	# Extract name of place from filename
+	pattern = r'domestic-[E,W].*?-'
+	location = re.sub(pattern, '', filename)
+	pattern = r'\/.*'
+	location = re.sub(pattern, '', location)
+
+	current_row = []
+	current_row.append(location)
+	for value in values:
+		if value not in current_rating:
+			current_row.append(0)
+		else:
+			current_row.append(current_rating[value])
+	current_writer.writerow(current_row)
+
+	potential_row = []
+	potential_row.append(location)
+	for value in values:
+		if value not in potential_rating:
+			potential_row.append(0)
+		else:
+			potential_row.append(potential_rating[value])
+	potential_writer.writerow(potential_row)
 
 def main():
 
+	analysis = input("\nChoose analysis to run:\n1. Analysis of totals\nOR\n2. Analysis by geography\nEnter number: ")
+
 	file_count = 1
 
-	for filename in list_of_files:
-		df = pd.read_csv(filename, usecols=['CURRENT_ENERGY_RATING','POTENTIAL_ENERGY_RATING'], dtype={'CURRENT_ENERGY_RATING': 'string', 'POTENTIAL_ENERGY_RATING': 'string'})
-		aggregate_data(df)
-		verbose and print("Global values:")
-		verbose and print(global_current_rating)
-		verbose and print(global_potential_rating)
-		print("Parsed File " + str(file_count) + ": "+ filename)
-		file_count = file_count + 1
-
-	print("Final values:")
-	print(global_current_rating)
-	print(global_potential_rating)
+	if analysis == '1':
+		for filename in list_of_files:
+			df = pd.read_csv(filename, usecols=['CURRENT_ENERGY_RATING','POTENTIAL_ENERGY_RATING'], dtype={'CURRENT_ENERGY_RATING': 'string', 'POTENTIAL_ENERGY_RATING': 'string'})
+			aggregate_data(df)
+			verbose and print("Global values:")
+			verbose and print(global_current_rating)
+			verbose and print(global_potential_rating)
+			print("Parsed File " + str(file_count) + ": "+ filename)
+			file_count = file_count + 1
+	elif analysis == '2':
+		with open('current_ratings_by_location.csv', mode='w') as output_file_current, open('potential_ratings_by_location.csv', mode='w') as output_file_potential:
+			current_writer = csv.writer(output_file_current, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+			potential_writer = csv.writer(output_file_potential, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+			headers = values.copy()
+			headers.insert(0, 'LOCATION')
+			current_writer.writerow(headers)
+			potential_writer.writerow(headers)
+			for filename in list_of_files:
+				df = pd.read_csv(filename, usecols=['CURRENT_ENERGY_RATING','POTENTIAL_ENERGY_RATING'], dtype={'CURRENT_ENERGY_RATING': 'string', 'POTENTIAL_ENERGY_RATING': 'string'})
+				aggregate_data_geographically(df, current_writer, potential_writer, filename)
+				print("Parsed File " + str(file_count) + ": "+ filename)
+				file_count = file_count + 1
+	else:
+		print("Invalid Entry")
 
 if __name__ == "__main__":
     main()
