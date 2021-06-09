@@ -9,4 +9,7 @@ app.register_blueprint(aggregate_api, url_prefix='/api/aggregate')
 
 @app.route("/")
 def index():
+    """
+    Landing page for API
+    """
     return "Welcome to the Housing Passport API"
