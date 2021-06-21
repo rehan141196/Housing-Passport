@@ -135,6 +135,7 @@ dmypy.json
 ### FRONT END ###
 
 # dependencies
+./react-basic/node_modules
 /node_modules
 /.pnp
 .pnp.js
