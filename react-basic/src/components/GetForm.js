@@ -2,47 +2,62 @@ import React, { useState } from "react";
 import axios from 'axios';
 import '../index.css';
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 export function GetForm(props) {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
+  // const [name, setName] = useState("");
+  // const [address, setAddress] = useState("");
   const [homes, setHomes] = useState(null);
+  const { user } = useAuth0();
+
+  // axios.get('http://127.0.0.1:5000/api/getrecord?username=' + 'anon')
+  //     .then((response) => {
+  //       console.log("GET Response")
+  //       console.log(response.data);
+  //       setHomes(response.data);
+  //       // setName("");
+  // })
   
   const handleSubmitUsername = (evt) => {
       evt.preventDefault();
-      axios.get('http://127.0.0.1:5000/api/getrecord?username=' + name)
+
+      axios.get('http://127.0.0.1:5000/api/getrecord?username=' + user['email'])
         .then((response) => {
           console.log("GET Response")
           console.log(response.data);
-          setHomes(response.data);
-          setName("");
+          if (response.data["response"] !== "No data found for this user") {
+            setHomes(response.data);
+          }
+          
+          // setName("");
         })
   }
 
-  const handleSubmitAddress = (evt) => {
-      evt.preventDefault();
-      axios.get('http://127.0.0.1:5000/api/getrecordbyaddress?address=' + address)
-        .then((response) => {
-          console.log("GET Response")
-          console.log(response.data);
-          setHomes(response.data);
-          setAddress("");
-        })
-  }
+  // const handleSubmitAddress = (evt) => {
+  //     evt.preventDefault();
+  //     axios.get('http://127.0.0.1:5000/api/getrecordbyaddress?address=' + address)
+  //       .then((response) => {
+  //         console.log("GET Response")
+  //         console.log(response.data);
+  //         setHomes(response.data);
+  //         setAddress("");
+  //       })
+  // }
 
   return (
     <>
     <form onSubmit={handleSubmitUsername}>
-      <label>
+{/*      <label>
         Username:
         <input
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
         />
-      </label>
-      <input type="submit" value="Submit" />
+      </label>*/}
+      <input type="submit" value="Get Homes" />
     </form>
-    <form onSubmit={handleSubmitAddress}>
+    {/*<form onSubmit={handleSubmitAddress}>
       <label>
         Address:
         <input
@@ -52,7 +67,16 @@ export function GetForm(props) {
         />
       </label>
       <input type="submit" value="Submit" />
-    </form>
+    </form>*/}
+{/*    {axios.get('http://127.0.0.1:5000/api/getrecord?username=' + 'anon')
+        .then((response) => {
+          console.log("GET Response")
+          console.log(response.data);
+          setHomes(response.data['data']);
+          // setName("");
+        })}*/}
+    <p>User: {user && user['email']}</p>
+
     <div className="homes">
           <div className="details">
                   <p>Username: {homes && homes['data']['username']}</p>

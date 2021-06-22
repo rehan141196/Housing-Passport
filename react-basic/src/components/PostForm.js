@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from 'axios';
 import '../index.css';
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 export function PostForm(props) {
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [posttown, setPosttown] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -31,13 +33,15 @@ export function PostForm(props) {
   const [smartmeters, setSmartmeters] = useState("");
   const [smartmeterids, setSmartmeterids] = useState("");
   const [photovoltaics, setPhotovoltaics] = useState("");
+
+  const { user } = useAuth0();
   
   
   const handleSubmit = (evt) => {
       evt.preventDefault();
 
       var bodyFormData = new FormData();
-      bodyFormData.append('username', name);
+      bodyFormData.append('username', user['email']);
       bodyFormData.append('address', address);
       bodyFormData.append('post_town', posttown);
       bodyFormData.append('postcode', postcode);
@@ -77,14 +81,14 @@ export function PostForm(props) {
   return (
     <>
     <form onSubmit={handleSubmit}>
-      <label>
+{/*      <label>
         Username:
         <input
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
         />
-      </label>
+      </label>*/}
       <label>
         Address:
         <input
@@ -112,6 +116,7 @@ export function PostForm(props) {
       <label>
         Residential:
         <select value={residential} onChange={e => setResidential(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
@@ -119,6 +124,7 @@ export function PostForm(props) {
       <label>
         Type:
         <select value={type} onChange={e => setType(e.target.value)}>
+            <option value="">Select</option>
             <option value="Flat">Flat</option>
             <option value="House">House</option>
             <option value="Bungalow">Bungalow</option>
@@ -137,6 +143,7 @@ export function PostForm(props) {
       <label>
         Age:
         <select value={age} onChange={e => setAge(e.target.value)}>
+            <option value="">Select</option>
             <option value="before 1900">Before 1900</option>
             <option value="1900-1929">1900-1929</option>
             <option value="1930-1949">1930-1949</option>
@@ -162,6 +169,7 @@ export function PostForm(props) {
       <label>
         Floor Type:
         <select value={floortype} onChange={e => setFloortype(e.target.value)}>
+            <option value="">Select</option>
             <option value="Suspended">Suspended</option>
             <option value="Solid">Solid</option>
             <option value="(another dwelling below)">Another Dwelling Below</option>
@@ -170,6 +178,7 @@ export function PostForm(props) {
       <label>
         Floor Insulation:
         <select value={floorinsulation} onChange={e => setFloorinsulation(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">True</option>
             <option value="False">False</option>
             <option value="Limited">Limited</option>
@@ -178,6 +187,7 @@ export function PostForm(props) {
       <label>
         Roof Type:
         <select value={rooftype} onChange={e => setRooftype(e.target.value)}>
+            <option value="">Select</option>
             <option value="Pitched">Pitched</option>
             <option value="Flat">Flat</option>
             <option value="(another dwelling above)">Another Dwelling Above</option>
@@ -186,6 +196,7 @@ export function PostForm(props) {
       <label>
         Roof Insulation:
         <select value={roofinsulation} onChange={e => setRoofinsulation(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">True</option>
             <option value="False">False</option>
             <option value="Limited">Limited</option>
@@ -194,6 +205,7 @@ export function PostForm(props) {
       <label>
         Wall Type:
         <select value={walltype} onChange={e => setWalltype(e.target.value)}>
+            <option value="">Select</option>
             <option value="Cavity">Cavity</option>
             <option value="Solid brick">Solid Brick</option>
             <option value="Timber">Timber</option>
@@ -204,6 +216,7 @@ export function PostForm(props) {
       <label>
         Wall Insulation:
         <select value={wallinsulation} onChange={e => setWallinsulation(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">True</option>
             <option value="False">False</option>
             <option value="Partial">Partial</option>
@@ -212,6 +225,7 @@ export function PostForm(props) {
       <label>
         Glaze Type:
         <select value={glazetype} onChange={e => setGlazetype(e.target.value)}>
+            <option value="">Select</option>
             <option value="Single">Single</option>
             <option value="Double">Double</option>
             <option value="Triple">Triple</option>
@@ -221,6 +235,7 @@ export function PostForm(props) {
       <label>
         Solar Water Heating:
         <select value={solarwaterheating} onChange={e => setSolarwaterheating(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
@@ -228,6 +243,7 @@ export function PostForm(props) {
       <label>
         Solar Panel Area:
         <select value={solarpanelarea} onChange={e => setSolarpanelarea(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
@@ -235,6 +251,7 @@ export function PostForm(props) {
       <label>
         Thermostat:
         <select value={thermostat} onChange={e => setThermostat(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
             <option value="Other">Other</option>
@@ -243,6 +260,7 @@ export function PostForm(props) {
       <label>
         Heating Type:
         <select value={heatingtype} onChange={e => setHeatingtype(e.target.value)}>
+            <option value="">Select</option>
             <option value="Boiler">Boiler</option>
             <option value="Electric">Electric</option>
             <option value="Community scheme">Community Scheme</option>
@@ -256,6 +274,7 @@ export function PostForm(props) {
       <label>
         Heating Fuel:
         <select value={heatingfuel} onChange={e => setHeatingfuel(e.target.value)}>
+            <option value="">Select</option>
             <option value="Mains gas">Mains Gas</option>
             <option value="Electric">Electric</option>
             <option value="Oil">Oil</option>
@@ -272,6 +291,7 @@ export function PostForm(props) {
       <label>
         Gas Connection:
         <select value={gasconnection} onChange={e => setGasconnection(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
@@ -279,6 +299,7 @@ export function PostForm(props) {
       <label>
         Hotwater Type:
         <select value={hotwatertype} onChange={e => setHotwatertype(e.target.value)}>
+            <option value="">Select</option>
             <option value="From main">From Main</option>
             <option value="Electric">Electric</option>
             <option value="Community scheme">Community Scheme</option>
@@ -322,6 +343,7 @@ export function PostForm(props) {
       <label>
         Photovoltaics:
         <select value={photovoltaics} onChange={e => setPhotovoltaics(e.target.value)}>
+            <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
