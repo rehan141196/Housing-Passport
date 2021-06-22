@@ -3,7 +3,18 @@ import boto3
 import requests
 from boto3.dynamodb.conditions import Key
 
+from authentication import requires_auth, AuthError
+
 aggregate_api = Blueprint("api/aggregate", __name__)
+
+@aggregate_api.errorhandler(AuthError)
+def handle_auth_error(ex):
+    """
+    Error handling for incorrect authentication
+    """
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
 
 @aggregate_api.route("/")
 def hello():
@@ -13,6 +24,7 @@ def hello():
     return jsonify({"response": "Welcome to the Housing Passport API for aggregation"})
 
 @aggregate_api.route("/by_field")
+@requires_auth
 def aggregate_by_field():
     """
     Aggregate data by specified field

@@ -2,8 +2,18 @@ from flask import Blueprint, jsonify, request
 import boto3
 import requests
 from boto3.dynamodb.conditions import Key
+from authentication import requires_auth, AuthError
 
 base_api = Blueprint("api", __name__)
+
+@base_api.errorhandler(AuthError)
+def handle_auth_error(ex):
+    """
+    Error handling for incorrect authentication
+    """
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
 
 @base_api.route("/")
 def hello():
@@ -13,6 +23,7 @@ def hello():
     return jsonify({"response": "Welcome to the Housing Passport API"})
 
 @base_api.route("/getrecord")
+@requires_auth
 def getrecord():
     """
     Retrieve record from DB by username
@@ -43,6 +54,7 @@ def getrecord():
     return jsonify({"response": "Data found for user", "data": result})
 
 @base_api.route("/addrecord", methods=['POST'])
+@requires_auth
 def addrecord():
     """
     Add record to DB using a POST request and compare with EPC API
@@ -195,6 +207,7 @@ def search_EPC_by_key(cert_key):
     return data['rows'][0]
 
 @base_api.route("/deleterecord", methods=['POST'])
+@requires_auth
 def deleterecord():
     """
     Delete record from DB
@@ -229,6 +242,7 @@ def deleterecord():
     return jsonify({"response": "Deleted entry in DB"})
 
 @base_api.route("/getrecordbyaddress")
+@requires_auth
 def getrecordbyaddress():
     """
     Retrieve record from DB by address

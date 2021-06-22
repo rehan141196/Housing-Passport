@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from api.base import base_api
 from api.aggregate import aggregate_api
@@ -14,4 +14,4 @@ def index():
     """
     Landing page for API
     """
-    return "Welcome to the Housing Passport API"
+    return jsonify({"response": "Welcome to the Housing Passport API"})
