@@ -35,9 +35,10 @@ export function PostForm(props) {
   const [photovoltaics, setPhotovoltaics] = useState("");
 
   const { user } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   
   
-  const handleSubmit = (evt) => {
+  const handleSubmit = async (evt) => {
       evt.preventDefault();
 
       var bodyFormData = new FormData();
@@ -71,7 +72,13 @@ export function PostForm(props) {
       bodyFormData.append('photovoltaics', photovoltaics);
       // alert(`Submitting Name ${name}`);
 
-      axios.post('http://127.0.0.1:5000/api/addrecord', bodyFormData, { "Content-Type": "multipart/form-data" })
+      const token = await getAccessTokenSilently();
+      console.log(token);
+
+      axios.post('http://127.0.0.1:5000/api/addrecord', bodyFormData, {headers: {
+          // Content-Type: `multipart/form-data`,
+          Authorization: `Bearer ${token}`,
+        }})
       .then((response) => {
           console.log("Post Response")
           console.log(response);
@@ -179,8 +186,8 @@ export function PostForm(props) {
         Floor Insulation:
         <select value={floorinsulation} onChange={e => setFloorinsulation(e.target.value)}>
             <option value="">Select</option>
-            <option value="True">True</option>
-            <option value="False">False</option>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
             <option value="Limited">Limited</option>
         </select>
       </label>
@@ -197,8 +204,8 @@ export function PostForm(props) {
         Roof Insulation:
         <select value={roofinsulation} onChange={e => setRoofinsulation(e.target.value)}>
             <option value="">Select</option>
-            <option value="True">True</option>
-            <option value="False">False</option>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
             <option value="Limited">Limited</option>
         </select>
       </label>
@@ -217,8 +224,8 @@ export function PostForm(props) {
         Wall Insulation:
         <select value={wallinsulation} onChange={e => setWallinsulation(e.target.value)}>
             <option value="">Select</option>
-            <option value="True">True</option>
-            <option value="False">False</option>
+            <option value="True">Yes</option>
+            <option value="False">No</option>
             <option value="Partial">Partial</option>
         </select>
       </label>

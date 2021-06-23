@@ -2,14 +2,22 @@ import React, { useState } from "react";
 import axios from 'axios';
 import '../index.css';
 
+import { useAuth0 } from "@auth0/auth0-react";
+
 export function AggregateForm(props) {
   const [posttown, setPosttown] = useState("");
   const [field, setField] = useState("type");
   const [result, setResult] = useState(null);
+
+  const { getAccessTokenSilently } = useAuth0();
   
-  const handleSubmit = (evt) => {
+  const handleSubmit = async (evt) => {
       evt.preventDefault();
-      axios.get('http://127.0.0.1:5000/api/aggregate/by_field?post_town=' + posttown.toUpperCase() + '&field=' + field)
+      const token = await getAccessTokenSilently();
+      console.log(token);
+      axios.get('http://127.0.0.1:5000/api/aggregate/by_field?post_town=' + posttown.toUpperCase() + '&field=' + field, {headers: {
+            Authorization: `Bearer ${token}`,
+          }})
         .then((response) => {
           console.log("GET Response")
           console.log(response.data);

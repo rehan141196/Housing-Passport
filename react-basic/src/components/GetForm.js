@@ -9,6 +9,7 @@ export function GetForm(props) {
   // const [address, setAddress] = useState("");
   const [homes, setHomes] = useState(null);
   const { user } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
 
   // axios.get('http://127.0.0.1:5000/api/getrecord?username=' + 'anon')
   //     .then((response) => {
@@ -18,10 +19,14 @@ export function GetForm(props) {
   //       // setName("");
   // })
   
-  const handleSubmitUsername = (evt) => {
+  const handleSubmitUsername = async (evt) => {
       evt.preventDefault();
+      const token = await getAccessTokenSilently();
+      console.log(token);
 
-      axios.get('http://127.0.0.1:5000/api/getrecord?username=' + user['email'])
+      axios.get('http://127.0.0.1:5000/api/getrecord?username=' + user['email'], {headers: {
+            Authorization: `Bearer ${token}`,
+          }})
         .then((response) => {
           console.log("GET Response")
           console.log(response.data);
@@ -30,7 +35,7 @@ export function GetForm(props) {
           }
           
           // setName("");
-        })
+        });
   }
 
   // const handleSubmitAddress = (evt) => {
