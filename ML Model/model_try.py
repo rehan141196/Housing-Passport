@@ -3,20 +3,37 @@ import pandas as pd
 import torch
 import pickle
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
 
 class Network(torch.nn.Module):
     
     def __init__(self, input_dimension, output_dimension, hidden_units=32, dropout_rate=0.3):
         # Call the initialisation function of the parent class.
         super(Network, self).__init__()
-        # Define the network layers. This example network has two hidden layers, each with 100 units.
+        # Define the network layers
         self.layer_1 = torch.nn.Linear(in_features=input_dimension, out_features=hidden_units)
         self.layer_2 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
         self.layer_3 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+
+        # self.layer_4 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+        # self.layer_5 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+        # self.layer_6 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+        # self.layer_7 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+        # self.layer_8 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+        # self.layer_9 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
+
         self.batch_norm1 = torch.nn.BatchNorm1d(input_dimension)
         self.batch_norm2 = torch.nn.BatchNorm1d(hidden_units)
         self.batch_norm3 = torch.nn.BatchNorm1d(hidden_units)
         self.batch_norm4 = torch.nn.BatchNorm1d(hidden_units)
+
+        # self.batch_norm5 = torch.nn.BatchNorm1d(hidden_units)
+        # self.batch_norm6 = torch.nn.BatchNorm1d(hidden_units)
+        # self.batch_norm7 = torch.nn.BatchNorm1d(hidden_units)
+        # self.batch_norm8 = torch.nn.BatchNorm1d(hidden_units)
+        # self.batch_norm9 = torch.nn.BatchNorm1d(hidden_units)
+        # self.batch_norm10 = torch.nn.BatchNorm1d(hidden_units)
+
         self.drops = torch.nn.Dropout(dropout_rate)
         self.output_layer = torch.nn.Linear(in_features=hidden_units, out_features=output_dimension)
 
@@ -25,12 +42,32 @@ class Network(torch.nn.Module):
         x = torch.nn.functional.relu(self.layer_1(x))
         x = self.drops(x)
         x = self.batch_norm2(x)
-        x = torch.nn.functional.relu(self.layer_2(x))
+        x = torch.sigmoid(self.layer_2(x))
         x = self.drops(x)
         x = self.batch_norm3(x)
-        x = torch.nn.functional.relu(self.layer_3(x))
+        x = torch.nn.functional.tanh(self.layer_3(x))
         x = self.drops(x)
         x = self.batch_norm4(x)
+
+        # x = torch.nn.functional.relu(self.layer_4(x))
+        # x = self.drops(x)
+        # x = self.batch_norm5(x)
+        # x = torch.nn.functional.relu(self.layer_5(x))
+        # x = self.drops(x)
+        # x = self.batch_norm6(x)
+        # x = torch.nn.functional.relu(self.layer_6(x))
+        # x = self.drops(x)
+        # x = self.batch_norm7(x)
+        # x = torch.nn.functional.relu(self.layer_7(x))
+        # x = self.drops(x)
+        # x = self.batch_norm8(x)
+        # x = torch.nn.functional.relu(self.layer_8(x))
+        # x = self.drops(x)
+        # x = self.batch_norm9(x)
+        # x = torch.nn.functional.relu(self.layer_9(x))
+        # x = self.drops(x)
+        # x = self.batch_norm10(x)
+
         output = torch.sigmoid(self.output_layer(x))
         return output
 
@@ -54,9 +91,6 @@ class Regressor():
 
         self.binarizers = []
 
-        # X, _ = self._preprocessor(x, training = True)
-
-        # self.input_size = X.shape[1]
         self.input_size = None
         self.output_size = 1
         self.nb_epoch = nb_epoch
@@ -66,8 +100,6 @@ class Regressor():
 
         self.model = None
         self.optimizer = None
-        # self.model = Network(self.input_size, self.output_size, hidden_units, dropout_rate=0.3)
-        # self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
 
     def _preprocessor(self, x, y = None, training = False):
         """ 
@@ -113,7 +145,6 @@ class Regressor():
         for col in categorical_cols:
             lb = preprocessing.LabelBinarizer()
             current_binarizer = lb.fit_transform(x[col])
-            # print(current_binarizer)
             self.binarizers.append(lb)
             new_cols = list(lb.classes_)
             new_df = pd.DataFrame(current_binarizer)
@@ -121,11 +152,6 @@ class Regressor():
             new_df.index = x.index
             x = pd.concat([x, new_df], axis=1)
             x = x.drop([col], axis=1)
-
-        # print("Binarizer List:")
-        # print(self.binarizers)
-
-        # print(x)
         
         # collect the max and min values of each column for use on validation set later
         self.max_values = x.max()
@@ -133,8 +159,6 @@ class Regressor():
 
         # normalize dataset by implementing min max scaling on the each column of the dataset so values are between 0 and 1
         normalized_x = (x - x.min()) / (x.max() - x.min())
-
-        # print(normalized_x)
 
         # convert x to tensor
         x = torch.tensor(normalized_x.values, dtype=torch.float32)
@@ -144,7 +168,6 @@ class Regressor():
             self.y_max_values = y.max()
             self.y_min_values = y.min()
             normalized_y = (y - y.min()) / (y.max() - y.min())
-            # print(normalized_y)
             y_tensor = torch.tensor(normalized_y.values, dtype=torch.float32)
 
         # Return preprocessed x and y, return None for y if it was None
@@ -175,7 +198,7 @@ class Regressor():
         verbose and print("Initial Y : ", Y, sum(torch.isnan(Y)))
         data_size, input_size = X.shape
         verbose and print("Sizes : ", data_size, input_size)
-        # could become a parameter
+
         minibatch_size = 128
 
         # define loss function as MSE loss
@@ -224,7 +247,6 @@ class Regressor():
             losses.append(np.mean(epoch_losses))
             verbose and print("Epoch:", epoch, "\tLoss: ", loss.item())
 
-        #return self
         return losses, val_losses
             
     def predict(self, x):
@@ -275,7 +297,6 @@ class Regressor():
         # define loss function as MSE loss
         loss_fn = torch.nn.MSELoss()
 
-        # predict Y - return a array - use x as it will be preprocessed inside predict function (imposed)
         Y_pred = self.predict(x)
         Y_pred = torch.tensor(Y_pred)
 
@@ -285,27 +306,22 @@ class Regressor():
 
         return loss, loss**(1/2)
 
-
 def save_regressor(trained_model): 
     """
-    Utility function to save the trained regressor model in part2_model.pickle.
+    Utility function to save the trained regressor model
     """
     with open('current_regressor.pickle', 'wb') as target:
         pickle.dump(trained_model, target)
     print("\nSaved model in current_regressor.pickle\n")
 
-
 def load_regressor(): 
     """ 
-    Utility function to load the trained regressor model in part2_model.pickle.
+    Utility function to load the trained regressor model
     """
-    # If you alter this, make sure it works in tandem with save_regressor
     with open('current_regressor.pickle', 'rb') as target:
         trained_model = pickle.load(target)
     print("\nLoaded model in current_regressor.pickle\n")
     return trained_model
-
-
 
 def RegressorHyperParameterSearch(dataset, output_label, k=5, seed=10): 
     """
@@ -381,10 +397,10 @@ def example_main():
     used_cols = ['CURRENT_ENERGY_EFFICIENCY', 'PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
     data_types = {'CURRENT_ENERGY_EFFICIENCY': 'string', 'PROPERTY_TYPE': 'string', 'MAINS_GAS_FLAG': 'string', 'GLAZED_TYPE': 'string', 'NUMBER_HABITABLE_ROOMS': 'string', 'LOW_ENERGY_LIGHTING': 'string', 'HOTWATER_DESCRIPTION': 'string', 'FLOOR_DESCRIPTION': 'string', 'WALLS_DESCRIPTION': 'string', 'ROOF_DESCRIPTION': 'string', 'MAINHEAT_DESCRIPTION': 'string', 'MAINHEATCONT_DESCRIPTION': 'string', 'MAIN_FUEL': 'string', 'SOLAR_WATER_HEATING_FLAG': 'string', 'CONSTRUCTION_AGE_BAND': 'string'}
     
-    data = pd.read_csv("Leeds_output.csv")#, usecols=used_cols, dtype=data_types)
+    data = pd.read_csv("Leeds_output.csv")
 
     # shuffle and split in train and test
-    data = data.sample(frac=1)#.reset_index(drop=True)
+    data = data.sample(frac=1)
     msk = np.random.rand(len(data)) < 0.8
     train = data[msk]
     test = data[~msk]
@@ -396,55 +412,28 @@ def example_main():
     x_test = test.loc[:, test.columns != output_label]
     y_test = test.loc[:, [output_label]]
 
-    print(x_train)
-    print(x_test)
-
-
-    # Training
-    # This example trains on the whole available dataset. 
-    # You probably want to separate some held-out data 
-    # to make sure the model isn't overfitting
-
-    regressor = Regressor(x_train, nb_epoch=10, learning_rate=0.001, hidden_units=36, dropout_rate=0.4)
-    losses, val_losses = regressor.fit(x_train, y_train)#, x_test, y_test)
-
-    # print(losses)
-    # print(val_losses)
+    regressor = Regressor(x_train, nb_epoch=10, learning_rate=0.002, hidden_units=64, dropout_rate=0.3)
+    losses, val_losses = regressor.fit(x_train, y_train)
 
     # Make a graph
-    fig, ax = plt.subplots()
-    ax.set(xlabel='Epoch', ylabel='log Loss', title='Log Loss Curve of the Network')
-    ax.plot(range(len(losses)), losses, color='blue')
-    # ax.plot(range(len(val_losses)), val_losses, color='red')
-    plt.yscale('log')
-    plt.legend(["training loss"]#, "validation loss"])
-    fig.savefig("figures/loss_vs_epochs.png")
-    plt.show()
-
-    # print("Prediction Input:")
-    # output = regressor.predict(test.loc[:, test.columns != output_label])
     # fig, ax = plt.subplots()
-    # ax.set(xlabel='Price prediction', ylabel='Occurences', title='Histogram of the price predictions')
-    # plt.hist(output, bins=40)
-    # plt.savefig("figures/prediction_histogram.png")
+    # ax.set(xlabel='Epoch', ylabel='Log Loss', title='Log Loss Curve of the Network')
+    # ax.plot(range(len(losses)), losses, color='blue')
+    # ax.plot(range(len(val_losses)), val_losses, color='red')
+    # plt.yscale('log')
+    # plt.legend(["Training Loss"])#, "validation loss"])
+    # plt.tight_layout()
+    # fig.savefig("loss_vs_epochs.png")
     # plt.show()
-    # #print(output)
     
     # save_regressor(regressor)
+    # regressor = load_regressor()
     # res = regressor.predict(x_test)
     # res.to_csv('res.csv', index=False)
     # print("Predicted output:")
     # print(res)
     # print("Test input:")
     # print(x_test)
-
-    # Error
-    print("Result on train : ")
-    MSE, RMSE = regressor.score(x_train, y_train)
-    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
-    print("Result on test : ")
-    MSE, RMSE = regressor.score(x_test, y_test)
-    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
     
     # print("Let's try hyperparameter tuning :")
     # best_hyperparams, best_RMSE = RegressorHyperParameterSearch(data, output_label, k=5)
@@ -454,15 +443,13 @@ def example_main():
     # regressor = Regressor(x_train, nb_epoch = best_hyperparams[0], learning_rate=best_hyperparams[1], hidden_units=best_hyperparams[2], dropout_rate=best_hyperparams[3])
     # losses = regressor.fit(x_train, y_train)
 
-    # save_regressor(regressor)
-
-    # # Error
-    # print("Result on train : ")
-    # MSE, RMSE = regressor.score(x_train, y_train)
-    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
-    # print("Result on test : ")
-    # MSE, RMSE = regressor.score(x_test, y_test)
-    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
+    # Error
+    print("Result on train : ")
+    MSE, RMSE = regressor.score(x_train, y_train)
+    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
+    print("Result on test : ")
+    MSE, RMSE = regressor.score(x_test, y_test)
+    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
 
 if __name__ == "__main__":
     example_main()
