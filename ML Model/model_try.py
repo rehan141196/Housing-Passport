@@ -39,13 +39,13 @@ class Network(torch.nn.Module):
 
     def forward(self, input_data):
         x = self.batch_norm1(input_data)
-        x = torch.nn.functional.relu(self.layer_1(x))
+        x = torch.sigmoid(self.layer_1(x))
         x = self.drops(x)
         x = self.batch_norm2(x)
         x = torch.sigmoid(self.layer_2(x))
         x = self.drops(x)
         x = self.batch_norm3(x)
-        x = torch.nn.functional.tanh(self.layer_3(x))
+        x = torch.sigmoid(self.layer_3(x))
         x = self.drops(x)
         x = self.batch_norm4(x)
 
@@ -121,6 +121,7 @@ class Regressor():
         """
 
         categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'CONSTRUCTION_AGE_BAND']
+        # categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL']#, 'CONSTRUCTION_AGE_BAND']
         x['MAINS_GAS_FLAG'] = x['MAINS_GAS_FLAG'].map({True: 1, False: 0})
         x['SOLAR_WATER_HEATING_FLAG'] = x['SOLAR_WATER_HEATING_FLAG'].map({True: 1, False: 0})
 
@@ -398,12 +399,17 @@ def example_main():
     data_types = {'CURRENT_ENERGY_EFFICIENCY': 'string', 'PROPERTY_TYPE': 'string', 'MAINS_GAS_FLAG': 'string', 'GLAZED_TYPE': 'string', 'NUMBER_HABITABLE_ROOMS': 'string', 'LOW_ENERGY_LIGHTING': 'string', 'HOTWATER_DESCRIPTION': 'string', 'FLOOR_DESCRIPTION': 'string', 'WALLS_DESCRIPTION': 'string', 'ROOF_DESCRIPTION': 'string', 'MAINHEAT_DESCRIPTION': 'string', 'MAINHEATCONT_DESCRIPTION': 'string', 'MAIN_FUEL': 'string', 'SOLAR_WATER_HEATING_FLAG': 'string', 'CONSTRUCTION_AGE_BAND': 'string'}
     
     data = pd.read_csv("Leeds_output.csv")
+    # print(data)
+    # data = data.drop(['CONSTRUCTION_AGE_BAND'], axis=1)
 
     # shuffle and split in train and test
     data = data.sample(frac=1)
     msk = np.random.rand(len(data)) < 0.8
     train = data[msk]
     test = data[~msk]
+
+    # train = data[:237933]
+    # test = data[237933:]
     
     # Spliting input and output
     x_train = train.loc[:, train.columns != output_label]
@@ -411,6 +417,11 @@ def example_main():
 
     x_test = test.loc[:, test.columns != output_label]
     y_test = test.loc[:, [output_label]]
+
+    print(x_train)
+    print(y_train)
+    print(x_test)
+    print(y_test)
 
     regressor = Regressor(x_train, nb_epoch=10, learning_rate=0.002, hidden_units=64, dropout_rate=0.3)
     losses, val_losses = regressor.fit(x_train, y_train)
