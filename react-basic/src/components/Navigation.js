@@ -9,6 +9,7 @@ const Navigation = () => {
           <NavLink to="/GetForm">Get Form</NavLink>
           <NavLink to="/PostForm">Post Form</NavLink>
           <NavLink to="/AggregateForm">Aggregate Form</NavLink>
+          <NavLink to="/PredictionForm">Prediction Form</NavLink>
        </div>
     );
 }

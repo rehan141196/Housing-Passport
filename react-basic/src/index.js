@@ -7,6 +7,7 @@ import Home from './components/Home';
 import { GetForm } from './components/GetForm';
 import { PostForm } from './components/PostForm';
 import { AggregateForm } from './components/AggregateForm';
+import { PredictionForm } from './components/PredictionForm';
 import Error from './components/Error';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './auth/protected-route';
@@ -21,6 +22,7 @@ ReactDOM.render((
           <ProtectedRoute path="/GetForm" component={GetForm}/>
           <ProtectedRoute path="/PostForm" component={PostForm}/>
           <ProtectedRoute path="/AggregateForm" component={AggregateForm}/>
+          <Route path="/PredictionForm" component={PredictionForm}/>
         <Route component={Error}/>
         </Switch>
     </div> 

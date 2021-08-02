@@ -1,9 +1,15 @@
+from flask import Blueprint, jsonify, request
 import numpy as np
 import pandas as pd
 import torch
 import pickle
+import os
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
+import sys
+import json
+
+pd.set_option('mode.chained_assignment', None)
 
 class Network(torch.nn.Module):
     
@@ -38,6 +44,7 @@ class Network(torch.nn.Module):
         self.output_layer = torch.nn.Linear(in_features=hidden_units, out_features=output_dimension)
 
     def forward(self, input_data):
+        self.eval()
         x = self.batch_norm1(input_data)
         x = torch.sigmoid(self.layer_1(x))
         x = self.drops(x)
@@ -122,8 +129,8 @@ class Regressor():
 
         categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'CONSTRUCTION_AGE_BAND']
         # categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL']#, 'CONSTRUCTION_AGE_BAND']
-        x['MAINS_GAS_FLAG'] = x['MAINS_GAS_FLAG'].map({True: 1, False: 0})
-        x['SOLAR_WATER_HEATING_FLAG'] = x['SOLAR_WATER_HEATING_FLAG'].map({True: 1, False: 0})
+        x['MAINS_GAS_FLAG'] = x['MAINS_GAS_FLAG'].map({'True': 1, 'False': 0})
+        x['SOLAR_WATER_HEATING_FLAG'] = x['SOLAR_WATER_HEATING_FLAG'].map({'True': 1, 'False': 0})
 
         if not training:
             for col in range(len(self.binarizers)):
@@ -136,6 +143,7 @@ class Regressor():
                 x = x.drop([categorical_cols[col]], axis=1)
 
             normalized_x = (x - self.min_values) / (self.max_values - self.min_values)
+            normalized_x = normalized_x.astype('float32')
             x = torch.tensor(normalized_x.values, dtype=torch.float32)
             if isinstance(y, pd.DataFrame):
                 normalized_y = (y - self.y_min_values) / (self.y_max_values - self.y_min_values)
@@ -144,6 +152,7 @@ class Regressor():
 
         self.binarizers = []
         for col in categorical_cols:
+            # print(col)
             lb = preprocessing.LabelBinarizer()
             current_binarizer = lb.fit_transform(x[col])
             self.binarizers.append(lb)
@@ -153,12 +162,19 @@ class Regressor():
             new_df.index = x.index
             x = pd.concat([x, new_df], axis=1)
             x = x.drop([col], axis=1)
+
+        # x.to_csv("debug.csv", index=False)
         
         # collect the max and min values of each column for use on validation set later
         self.max_values = x.max()
         self.min_values = x.min()
 
+        # print(self.max_values)
+        # print(self.min_values)
+
         # normalize dataset by implementing min max scaling on the each column of the dataset so values are between 0 and 1
+        # den = x.max() - x.min()
+        # num = x - x.min()
         normalized_x = (x - x.min()) / (x.max() - x.min())
 
         # convert x to tensor
@@ -187,7 +203,7 @@ class Regressor():
             self {Regressor} -- Trained model.
 
         """
-        verbose = True
+        verbose = False
 
         X, Y = self._preprocessor(x, y = y, training = True)
 
@@ -307,21 +323,22 @@ class Regressor():
 
         return loss, loss**(1/2)
 
-def save_regressor(trained_model): 
+def save_regressor(trained_model, path=None): 
     """
     Utility function to save the trained regressor model
     """
-    with open('current_regressor.pickle', 'wb') as target:
+    with open(path, 'wb') as target:
         pickle.dump(trained_model, target)
-    print("\nSaved model in current_regressor.pickle\n")
+    print("\nSaved model in " + path + "\n")
 
-def load_regressor(): 
+def load_regressor(path=None): 
     """ 
     Utility function to load the trained regressor model
     """
-    with open('current_regressor.pickle', 'rb') as target:
+    # print(path)
+    with open(path, 'rb') as target:
         trained_model = pickle.load(target)
-    print("\nLoaded model in current_regressor.pickle\n")
+    # print("\nLoaded model from " + path + "\n")
     return trained_model
 
 def RegressorHyperParameterSearch(dataset, output_label, k=5, seed=10): 
@@ -392,13 +409,16 @@ def RegressorHyperParameterSearch(dataset, output_label, k=5, seed=10):
 
     return HYPER_PARAMS_SPACE[opt_params_indice], avg_RMSE_s[opt_params_indice]
 
-def example_main():
+def train_model(file=None):
+
+    if not file:
+        return
 
     output_label = 'CURRENT_ENERGY_EFFICIENCY'
     used_cols = ['CURRENT_ENERGY_EFFICIENCY', 'PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
-    data_types = {'CURRENT_ENERGY_EFFICIENCY': 'string', 'PROPERTY_TYPE': 'string', 'MAINS_GAS_FLAG': 'string', 'GLAZED_TYPE': 'string', 'NUMBER_HABITABLE_ROOMS': 'string', 'LOW_ENERGY_LIGHTING': 'string', 'HOTWATER_DESCRIPTION': 'string', 'FLOOR_DESCRIPTION': 'string', 'WALLS_DESCRIPTION': 'string', 'ROOF_DESCRIPTION': 'string', 'MAINHEAT_DESCRIPTION': 'string', 'MAINHEATCONT_DESCRIPTION': 'string', 'MAIN_FUEL': 'string', 'SOLAR_WATER_HEATING_FLAG': 'string', 'CONSTRUCTION_AGE_BAND': 'string'}
+    data_types = {'CURRENT_ENERGY_EFFICIENCY': 'int', 'PROPERTY_TYPE': 'string', 'MAINS_GAS_FLAG': 'string', 'GLAZED_TYPE': 'string', 'NUMBER_HABITABLE_ROOMS': 'int', 'LOW_ENERGY_LIGHTING': 'int', 'HOTWATER_DESCRIPTION': 'string', 'FLOOR_DESCRIPTION': 'string', 'WALLS_DESCRIPTION': 'string', 'ROOF_DESCRIPTION': 'string', 'MAINHEAT_DESCRIPTION': 'string', 'MAINHEATCONT_DESCRIPTION': 'string', 'MAIN_FUEL': 'string', 'SOLAR_WATER_HEATING_FLAG': 'string', 'CONSTRUCTION_AGE_BAND': 'string'}
     
-    data = pd.read_csv("Leeds_output.csv")
+    data = pd.read_csv(file, usecols=used_cols, dtype=data_types)
     # print(data)
     # data = data.drop(['CONSTRUCTION_AGE_BAND'], axis=1)
 
@@ -418,10 +438,11 @@ def example_main():
     x_test = test.loc[:, test.columns != output_label]
     y_test = test.loc[:, [output_label]]
 
-    print(x_train)
-    print(y_train)
-    print(x_test)
-    print(y_test)
+    # print(x_train.columns.tolist())
+    # print(x_train)
+    # print(y_train)
+    # print(x_test)
+    # print(y_test)
 
     regressor = Regressor(x_train, nb_epoch=10, learning_rate=0.002, hidden_units=64, dropout_rate=0.3)
     losses, val_losses = regressor.fit(x_train, y_train)
@@ -455,12 +476,45 @@ def example_main():
     # losses = regressor.fit(x_train, y_train)
 
     # Error
-    print("Result on train : ")
-    MSE, RMSE = regressor.score(x_train, y_train)
-    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
-    print("Result on test : ")
-    MSE, RMSE = regressor.score(x_test, y_test)
-    print("MSE : ", MSE, "  |   RMSE : ", RMSE)
+    # errors = []
+    # print("Result on train : ")
+    # MSE, RMSE = regressor.score(x_train, y_train)
+    # errors.append(RMSE)
+    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
+    # print("Result on test : ")
+    # MSE, RMSE = regressor.score(x_test, y_test)
+    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
+
+    # return regressor, RMSE
+
+def create_all_models():
+    directory = "DB Outputs"
+    df = pd.DataFrame(columns = ['Name', 'Train RMSE', 'Test RMSE'])
+    for file in os.listdir(directory):
+        print("Working on file: " + file)
+        if ".csv" not in file or (file.replace(".csv", "") + ".pickle") in os.listdir("Pickle Models"):
+            print("Model already exists, skipping file: " + file)
+            continue
+        regressor, error = train_model(directory + '/' + file)
+        name = "Pickle Models/" + file.replace(".csv", "") + ".pickle"
+        save_regressor(regressor, name)
+        df = df.append({'Name': file.replace(".csv", ""), 'Test RMSE': error}, ignore_index=True)
+        print(file + "\t" +  str(error) + "\n")
+    df.to_csv("Pickle Model Errors.csv", index=False)
+
+def make_one_prediction(filename=None, inputs={}):
+    regressor = load_regressor(filename)
+    used_cols = ['PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
+    df = pd.DataFrame(columns=used_cols)
+    df = df.append(new_row, ignore_index=True)
+    result = regressor.predict(df)
+    print(result[0][0])
+    return result[0][0]
 
 if __name__ == "__main__":
-    example_main()
+    # train_model()
+    # create_all_models()
+    file = sys.argv[1]
+    new_row = json.loads(sys.argv[2])
+    # new_row = {'PROPERTY_TYPE': 'House', 'MAINS_GAS_FLAG': 'True', 'GLAZED_TYPE': 'Double', 'NUMBER_HABITABLE_ROOMS': 4, 'LOW_ENERGY_LIGHTING': 100, 'HOTWATER_DESCRIPTION': 'From main', 'FLOOR_DESCRIPTION': 'Suspended', 'WALLS_DESCRIPTION': 'False', 'ROOF_DESCRIPTION': 'Other', 'MAINHEAT_DESCRIPTION': 'Boiler', 'MAINHEATCONT_DESCRIPTION': 'True', 'MAIN_FUEL': 'Mains gas', 'SOLAR_WATER_HEATING_FLAG': 'False', 'CONSTRUCTION_AGE_BAND': '1900-1929'}
+    to_return = make_one_prediction(file, new_row)
