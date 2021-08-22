@@ -285,6 +285,9 @@ def predict_efficiency():
     """
     data = request.form.to_dict()
 
+    if data["post_town"] not in city_codes:
+        return jsonify({"response": "Incorrect post town"})
+
     path = "./Pickle Models/" + city_codes[data["post_town"]] + ".pickle"
 
     new_row = {'PROPERTY_TYPE': data['type'], 'MAINS_GAS_FLAG': data['gas_connection'], 'GLAZED_TYPE': data['glaze_type'], 'NUMBER_HABITABLE_ROOMS': int(data['bedrooms']), 'LOW_ENERGY_LIGHTING': int(data['low_energy_light_pct']), 'HOTWATER_DESCRIPTION': data['hotwater_type'], 'FLOOR_DESCRIPTION': data['floor_type'], 'WALLS_DESCRIPTION': data['wall_insulation'], 'ROOF_DESCRIPTION': data['roof_type'], 'MAINHEAT_DESCRIPTION': data['heating_type'], 'MAINHEATCONT_DESCRIPTION': data['thermostat'], 'MAIN_FUEL': data['heating_fuel'], 'SOLAR_WATER_HEATING_FLAG': data['solar_water_heating'], 'CONSTRUCTION_AGE_BAND': data['age']}
