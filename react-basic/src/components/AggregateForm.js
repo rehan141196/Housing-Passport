@@ -5,12 +5,15 @@ import '../index.css';
 import { useAuth0 } from "@auth0/auth0-react";
 
 export function AggregateForm(props) {
+
+  // Define Hooks
   const [posttown, setPosttown] = useState("");
   const [field, setField] = useState("type");
   const [result, setResult] = useState(null);
 
   const { getAccessTokenSilently } = useAuth0();
   
+  // Get access token from Auth0 for back end request
   const handleSubmit = async (evt) => {
       evt.preventDefault();
       const token = await getAccessTokenSilently();

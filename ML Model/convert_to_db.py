@@ -345,6 +345,9 @@ list_of_files = [
 ]
 
 def example_main():
+	"""
+	Convert the CSV files to the form that is used to store the data in the database using a string matching algorithm
+	"""
 
     output_label = 'CURRENT_ENERGY_EFFICIENCY'
     used_cols = ['CURRENT_ENERGY_EFFICIENCY', 'PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
@@ -356,6 +359,8 @@ def example_main():
         output = pd.DataFrame(columns=used_cols)
 
         output['CURRENT_ENERGY_EFFICIENCY'] = data['CURRENT_ENERGY_EFFICIENCY']
+
+        # for each column convert check the value and convert to form that is used in database
 
         floor_inuslation = []
 
@@ -600,8 +605,6 @@ def example_main():
                 age.append('Unknown')
 
         output['CONSTRUCTION_AGE_BAND'] = age
-
-        # print(output)
 
         # write to a new file
         pattern = re.compile("([EW]\d\d\d\d\d\d\d\d)")

@@ -12,6 +12,9 @@ import Error from './components/Error';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './auth/protected-route';
 
+// Render component for each Form on website
+// Use protected routes to force user log in
+
 ReactDOM.render((
   <BrowserRouter>
     <Auth0ProviderWithHistory>

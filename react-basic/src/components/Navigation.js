@@ -1,6 +1,8 @@
 import React from 'react';
  
 import { NavLink } from 'react-router-dom';
+
+// Links to the different parts of the website 
  
 const Navigation = () => {
     return (

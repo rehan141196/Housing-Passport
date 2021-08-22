@@ -1,3 +1,8 @@
+"""
+Code has been adapted from:
+https://gitlab.doc.ic.ac.uk/lab2021_autumn/neural_networks_72
+"""
+
 from flask import Blueprint, jsonify, request
 import numpy as np
 import pandas as pd
@@ -14,37 +19,26 @@ pd.set_option('mode.chained_assignment', None)
 class Network(torch.nn.Module):
     
     def __init__(self, input_dimension, output_dimension, hidden_units=32, dropout_rate=0.3):
-        # Call the initialisation function of the parent class.
         super(Network, self).__init__()
-        # Define the network layers
         self.layer_1 = torch.nn.Linear(in_features=input_dimension, out_features=hidden_units)
         self.layer_2 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
         self.layer_3 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-
-        # self.layer_4 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-        # self.layer_5 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-        # self.layer_6 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-        # self.layer_7 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-        # self.layer_8 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
-        # self.layer_9 = torch.nn.Linear(in_features=hidden_units, out_features=hidden_units)
 
         self.batch_norm1 = torch.nn.BatchNorm1d(input_dimension)
         self.batch_norm2 = torch.nn.BatchNorm1d(hidden_units)
         self.batch_norm3 = torch.nn.BatchNorm1d(hidden_units)
         self.batch_norm4 = torch.nn.BatchNorm1d(hidden_units)
 
-        # self.batch_norm5 = torch.nn.BatchNorm1d(hidden_units)
-        # self.batch_norm6 = torch.nn.BatchNorm1d(hidden_units)
-        # self.batch_norm7 = torch.nn.BatchNorm1d(hidden_units)
-        # self.batch_norm8 = torch.nn.BatchNorm1d(hidden_units)
-        # self.batch_norm9 = torch.nn.BatchNorm1d(hidden_units)
-        # self.batch_norm10 = torch.nn.BatchNorm1d(hidden_units)
-
         self.drops = torch.nn.Dropout(dropout_rate)
         self.output_layer = torch.nn.Linear(in_features=hidden_units, out_features=output_dimension)
 
     def forward(self, input_data):
+        """
+        Make a forward pass through the neural network
+        """
         self.eval()
+
+        # define the activation function for the layers
         x = self.batch_norm1(input_data)
         x = torch.sigmoid(self.layer_1(x))
         x = self.drops(x)
@@ -56,25 +50,6 @@ class Network(torch.nn.Module):
         x = self.drops(x)
         x = self.batch_norm4(x)
 
-        # x = torch.nn.functional.relu(self.layer_4(x))
-        # x = self.drops(x)
-        # x = self.batch_norm5(x)
-        # x = torch.nn.functional.relu(self.layer_5(x))
-        # x = self.drops(x)
-        # x = self.batch_norm6(x)
-        # x = torch.nn.functional.relu(self.layer_6(x))
-        # x = self.drops(x)
-        # x = self.batch_norm7(x)
-        # x = torch.nn.functional.relu(self.layer_7(x))
-        # x = self.drops(x)
-        # x = self.batch_norm8(x)
-        # x = torch.nn.functional.relu(self.layer_8(x))
-        # x = self.drops(x)
-        # x = self.batch_norm9(x)
-        # x = torch.nn.functional.relu(self.layer_9(x))
-        # x = self.drops(x)
-        # x = self.batch_norm10(x)
-
         output = torch.sigmoid(self.output_layer(x))
         return output
 
@@ -82,14 +57,8 @@ class Regressor():
 
     def __init__(self, x, nb_epoch=10, learning_rate=0.0002, hidden_units=32, dropout_rate=0.3):
         """ 
-        Initialise the model.
-          
-        Arguments:
-            - x {pd.DataFrame} -- Raw input data of shape 
-                (batch_size, input_size), used to compute the size 
-                of the network.
-            - nb_epoch {int} -- number of epoch to train the network.
-
+        Initialise the model
+        Requires pandas dataframe as input
         """
         self.max_values = None
         self.min_values = None
@@ -98,6 +67,7 @@ class Regressor():
 
         self.binarizers = []
 
+        # store values from training to be used in practice
         self.input_size = None
         self.output_size = 1
         self.nb_epoch = nb_epoch
@@ -110,29 +80,18 @@ class Regressor():
 
     def _preprocessor(self, x, y = None, training = False):
         """ 
-        Preprocess input of the network.
-          
-        Arguments:
-            - x {pd.DataFrame} -- Raw input array of shape 
-                (batch_size, input_size).
-            - y {pd.DataFrame} -- Raw target array of shape (batch_size, 1).
-            - training {boolean} -- Boolean indicating if we are training or 
-                testing the model.
-
-        Returns:
-            - {torch.tensor} -- Preprocessed input array of size 
-                (batch_size, input_size).
-            - {torch.tensor} -- Preprocessed target array of size 
-                (batch_size, 1).
-
+        Preprocess input of the network
+        Takes pandas data frame as input and returns tensors in PyTorch
         """
 
         categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'CONSTRUCTION_AGE_BAND']
-        # categorical_cols = ['PROPERTY_TYPE', 'GLAZED_TYPE', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL']#, 'CONSTRUCTION_AGE_BAND']
+        
+        # map the True/False columns to 1 and 0
         x['MAINS_GAS_FLAG'] = x['MAINS_GAS_FLAG'].map({'True': 1, 'False': 0})
         x['SOLAR_WATER_HEATING_FLAG'] = x['SOLAR_WATER_HEATING_FLAG'].map({'True': 1, 'False': 0})
 
         if not training:
+            # binarize each categorical column
             for col in range(len(self.binarizers)):
                 current = self.binarizers[col].transform(x[categorical_cols[col]])
                 new_cols = list(self.binarizers[col].classes_)
@@ -142,6 +101,7 @@ class Regressor():
                 x = pd.concat([x, new_df], axis=1)
                 x = x.drop([categorical_cols[col]], axis=1)
 
+            # normalize values and convert to tensor 
             normalized_x = (x - self.min_values) / (self.max_values - self.min_values)
             normalized_x = normalized_x.astype('float32')
             x = torch.tensor(normalized_x.values, dtype=torch.float32)
@@ -151,8 +111,9 @@ class Regressor():
             return x, (y_tensor if isinstance(y, pd.DataFrame) else None)
 
         self.binarizers = []
+
+        # use binarizers from training to binarize current input
         for col in categorical_cols:
-            # print(col)
             lb = preprocessing.LabelBinarizer()
             current_binarizer = lb.fit_transform(x[col])
             self.binarizers.append(lb)
@@ -162,158 +123,97 @@ class Regressor():
             new_df.index = x.index
             x = pd.concat([x, new_df], axis=1)
             x = x.drop([col], axis=1)
-
-        # x.to_csv("debug.csv", index=False)
         
-        # collect the max and min values of each column for use on validation set later
+        # store the max and min values of each column
         self.max_values = x.max()
         self.min_values = x.min()
 
-        # print(self.max_values)
-        # print(self.min_values)
-
-        # normalize dataset by implementing min max scaling on the each column of the dataset so values are between 0 and 1
-        # den = x.max() - x.min()
-        # num = x - x.min()
+        # normalize dataset with min-max scaling
         normalized_x = (x - x.min()) / (x.max() - x.min())
 
-        # convert x to tensor
+        # convert to tensors
         x = torch.tensor(normalized_x.values, dtype=torch.float32)
 
         if isinstance(y, pd.DataFrame):
-            # normalize y and convert to tensor
             self.y_max_values = y.max()
             self.y_min_values = y.min()
             normalized_y = (y - y.min()) / (y.max() - y.min())
             y_tensor = torch.tensor(normalized_y.values, dtype=torch.float32)
 
-        # Return preprocessed x and y, return None for y if it was None
         return x, (y_tensor if isinstance(y, pd.DataFrame) else None)
         
     def fit(self, x, y, x_val=None, y_val=None):
         """
-        Regressor training function
-
-        Arguments:
-            - x {pd.DataFrame} -- Raw input array of shape 
-                (batch_size, input_size).
-            - y {pd.DataFrame} -- Raw output array of shape (batch_size, 1).
-
-        Returns:
-            self {Regressor} -- Trained model.
-
+        Train a regressor model given the input and expected output
+        Returns a trained model
         """
-        verbose = False
 
         X, Y = self._preprocessor(x, y = y, training = True)
 
+        # create neural network with Adam optimizer and MSE loss
         self.input_size = X.shape[1]
         self.model = Network(self.input_size, self.output_size, self.hidden_units, self.dropout_rate)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
-
-        verbose and print("Initial X : ", X, sum(torch.isnan(X)))
-        verbose and print("Initial Y : ", Y, sum(torch.isnan(Y)))
         data_size, input_size = X.shape
-        verbose and print("Sizes : ", data_size, input_size)
-
         minibatch_size = 128
-
-        # define loss function as MSE loss
         loss_fn = torch.nn.MSELoss()
-        val_loss_fn = torch.nn.MSELoss()
 
-        # for plotting purpose
         losses = []
-        val_losses = []
 
-        # run the loop for number of epochs given 
+        # run model for epochs provided
         for epoch in range(self.nb_epoch):
 
-            # make sure our batch are randomly sampled and change at each epoch
             permutation = torch.randperm(data_size)
-            verbose and print("Permutation : ", permutation)
-
             epoch_losses = []
 
-            # get through data with batches
+            # at each epoch run the batch through the network and collect the loss
             for i in range(0, data_size, minibatch_size):
                 
-                # prepare optimizer
                 self.optimizer.zero_grad()
 
-                # get batch indices
                 indices = permutation[i:i + minibatch_size]
                 X_batch, Y_batch = X[indices], Y[indices]
-                # verbose and print("X batch : ", X_batch, sum(torch.isnan(X_batch)))
-                # verbose and print("Y batch : ", Y_batch, sum(torch.isnan(Y_batch)))
 
-                # get the predictions
                 Y_pred = self.model.forward(X_batch.float())
-                # verbose and print("Y pred : ", Y_pred, sum(torch.isnan(Y_pred)))
 
-                # get the loss
                 loss = loss_fn(Y_pred, Y_batch.float())
-                # verbose and print("Loss : ", loss, torch.isnan(loss))
                 epoch_losses.append(loss.item())
 
-                # do back propagation
+                # back propagate the gradient
                 loss.backward()
                 self.optimizer.step()
 
-            # end of an epoch - print the loss
             losses.append(np.mean(epoch_losses))
-            verbose and print("Epoch:", epoch, "\tLoss: ", loss.item())
 
-        return losses, val_losses
+        return losses
             
     def predict(self, x):
         """
-        Ouput the value corresponding to an input x.
-
-        Arguments:
-            x {pd.DataFrame} -- Raw input array of shape 
-                (batch_size, input_size).
-
-        Returns:
-            {np.darray} -- Predicted value for the given input (batch_size, 1).
-
+        Use a trained model to predict the output for a dataframe provided
         """
 
+        # preprocess data and propagate through network
         X, _ = self._preprocessor(x, training = False)
-
-        # run the input through the NN
         predicted_y = self.model.forward(X.float())
 
-        # convert output tensor to dataframe
+        # scale the data back to original value after normalization to get the energy efficiency score 
         predicted_y = predicted_y.detach().numpy()
         predicted_y = pd.DataFrame(predicted_y, columns=['CURRENT_ENERGY_EFFICIENCY'])
-
-        # revert the min-max normalization normalization performed on Y
         multiplication_constant = self.y_max_values - self.y_min_values
         mult_result = pd.DataFrame(predicted_y.values * multiplication_constant.values, columns=predicted_y.columns, index=predicted_y.index)
         scaled_predicted_y = mult_result + self.y_min_values
-
-        # convert to numpy array
         scaled_predicted_y = scaled_predicted_y.values
 
         return scaled_predicted_y
 
     def score(self, x, y):
         """
-        Function to evaluate the model accuracy on a validation dataset.
-
-        Arguments:
-            - x {pd.DataFrame} -- Raw input array of shape 
-                (batch_size, input_size).
-            - y {pd.DataFrame} -- Raw ouput array of shape (batch_size, 1).
-
-        Returns:
-            {float} -- Quantification of the efficiency of the model.
-
+        Evaluates the neural network by taking an input, running it through the neural network and comparing with expected output
+        Returns loss values
         """
-        # define loss function as MSE loss
-        loss_fn = torch.nn.MSELoss()
 
+        # predict output based on input given 
+        loss_fn = torch.nn.MSELoss()
         Y_pred = self.predict(x)
         Y_pred = torch.tensor(Y_pred)
 
@@ -325,35 +225,24 @@ class Regressor():
 
 def save_regressor(trained_model, path=None): 
     """
-    Utility function to save the trained regressor model
+    Utility function to save the trained regressor model as a pickle model
     """
     with open(path, 'wb') as target:
         pickle.dump(trained_model, target)
-    print("\nSaved model in " + path + "\n")
 
 def load_regressor(path=None): 
     """ 
-    Utility function to load the trained regressor model
+    Utility function to load the trained regressor model as a pickle model
     """
-    # print(path)
     with open(path, 'rb') as target:
         trained_model = pickle.load(target)
-    # print("\nLoaded model from " + path + "\n")
     return trained_model
 
 def RegressorHyperParameterSearch(dataset, output_label, k=5, seed=10): 
     """
-    Performs a hyper-parameter for fine-tuning the regressor implemented 
-    in the Regressor class.
-
-    Arguments:
-        Add whatever inputs you need.
-        
-    Returns:
-        The function should return your optimised hyper-parameters. 
-
+    Run a hyperparameter search to find the best hyperparameter values
     """
-    # define the hyper parameters space
+
     HYPER_PARAMS_SPACE = []
     for nb_epoch in [10]:
         for lr in [0.002, 0.001]:
@@ -361,160 +250,130 @@ def RegressorHyperParameterSearch(dataset, output_label, k=5, seed=10):
                 for dropout_rate in [0.3, 0.4, 0.5]:
                     HYPER_PARAMS_SPACE += [[nb_epoch, lr, hidden_units, dropout_rate]]
 
-    print(HYPER_PARAMS_SPACE)
-
-    # copy to be safe with data shuffling
+    # save original dataset and randomize
     data = dataset.copy()
-    
-    # shuffle the dataset first
     data.sample(frac=1)
 
-    # store performances
     avg_RMSE_s = np.zeros((len(HYPER_PARAMS_SPACE), 1))
 
     N, _ = data.shape
     a = N // k
 
-    # last batch will be bigger than the others by (N % k, which is < k by definition)
+    # create a neural network for each set of hyperparameters and evaluate
     for i, hyper_params in enumerate(HYPER_PARAMS_SPACE):
 
-        # for each hyper_params tuple, do a cross validation to estimate performance
         for j in range(0, k):
 
-            # split w/ train and validate
             validate = data[a*j:a*(j+1)]
             train = pd.concat((data[:a*j], data[a*(j+1):]), axis=0)
         
-            # Spliting input and output
             x_train = train.loc[:, train.columns != output_label]
             y_train = train.loc[:, [output_label]]
 
             x_val = validate.loc[:, validate.columns != output_label]
             y_val = validate.loc[:, [output_label]]
 
-            # define the regressor with the hyperparameters and the data
             regressor = Regressor(x_train, nb_epoch = hyper_params[0], learning_rate=hyper_params[1])
             losses = regressor.fit(x_train, y_train)
 
-            #_, RMSE = regressor.score(x_train, y_train)
             _, RMSE = regressor.score(x_val, y_val)
 
+            # collect average RMSE for each batch
             if j == 0:
                 avg_RMSE_s[i] = RMSE
-            else: # with this formula we avoid saving the confusion matrixs
+            else:
                 avg_RMSE_s[i] = (j / (j + 1)) * (avg_RMSE_s[i] + (RMSE / j))
 
-    # get the mean performance for each one
     opt_params_indice = np.argmin(avg_RMSE_s)
 
     return HYPER_PARAMS_SPACE[opt_params_indice], avg_RMSE_s[opt_params_indice]
 
 def train_model(file=None):
+    """
+    Train a model given a CSV file as input
+    Returns the trained model
+    """
 
     if not file:
         return
 
+    # read CSV file and convert to pandas dataframe
     output_label = 'CURRENT_ENERGY_EFFICIENCY'
     used_cols = ['CURRENT_ENERGY_EFFICIENCY', 'PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
     data_types = {'CURRENT_ENERGY_EFFICIENCY': 'int', 'PROPERTY_TYPE': 'string', 'MAINS_GAS_FLAG': 'string', 'GLAZED_TYPE': 'string', 'NUMBER_HABITABLE_ROOMS': 'int', 'LOW_ENERGY_LIGHTING': 'int', 'HOTWATER_DESCRIPTION': 'string', 'FLOOR_DESCRIPTION': 'string', 'WALLS_DESCRIPTION': 'string', 'ROOF_DESCRIPTION': 'string', 'MAINHEAT_DESCRIPTION': 'string', 'MAINHEATCONT_DESCRIPTION': 'string', 'MAIN_FUEL': 'string', 'SOLAR_WATER_HEATING_FLAG': 'string', 'CONSTRUCTION_AGE_BAND': 'string'}
-    
     data = pd.read_csv(file, usecols=used_cols, dtype=data_types)
-    # print(data)
-    # data = data.drop(['CONSTRUCTION_AGE_BAND'], axis=1)
 
-    # shuffle and split in train and test
+    # use 80-20 split for train and test
     data = data.sample(frac=1)
     msk = np.random.rand(len(data)) < 0.8
     train = data[msk]
     test = data[~msk]
 
-    # train = data[:237933]
-    # test = data[237933:]
-    
-    # Spliting input and output
     x_train = train.loc[:, train.columns != output_label]
     y_train = train.loc[:, [output_label]]
 
     x_test = test.loc[:, test.columns != output_label]
     y_test = test.loc[:, [output_label]]
 
-    # print(x_train.columns.tolist())
-    # print(x_train)
-    # print(y_train)
-    # print(x_test)
-    # print(y_test)
-
+    # create the neural network
     regressor = Regressor(x_train, nb_epoch=10, learning_rate=0.002, hidden_units=64, dropout_rate=0.3)
-    losses, val_losses = regressor.fit(x_train, y_train)
+    losses = regressor.fit(x_train, y_train)
 
-    # Make a graph
-    # fig, ax = plt.subplots()
-    # ax.set(xlabel='Epoch', ylabel='Log Loss', title='Log Loss Curve of the Network')
-    # ax.plot(range(len(losses)), losses, color='blue')
-    # ax.plot(range(len(val_losses)), val_losses, color='red')
-    # plt.yscale('log')
-    # plt.legend(["Training Loss"])#, "validation loss"])
-    # plt.tight_layout()
-    # fig.savefig("loss_vs_epochs.png")
-    # plt.show()
-    
-    # save_regressor(regressor)
-    # regressor = load_regressor()
-    # res = regressor.predict(x_test)
-    # res.to_csv('res.csv', index=False)
-    # print("Predicted output:")
-    # print(res)
-    # print("Test input:")
-    # print(x_test)
-    
-    # print("Let's try hyperparameter tuning :")
-    # best_hyperparams, best_RMSE = RegressorHyperParameterSearch(data, output_label, k=5)
-    # print("Best hyper params  :  ", best_hyperparams)
-    # print("Best mean RMSE  :  ", best_RMSE)
-
-    # regressor = Regressor(x_train, nb_epoch = best_hyperparams[0], learning_rate=best_hyperparams[1], hidden_units=best_hyperparams[2], dropout_rate=best_hyperparams[3])
-    # losses = regressor.fit(x_train, y_train)
-
-    # Error
-    # errors = []
-    # print("Result on train : ")
-    # MSE, RMSE = regressor.score(x_train, y_train)
-    # errors.append(RMSE)
-    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
-    # print("Result on test : ")
-    # MSE, RMSE = regressor.score(x_test, y_test)
-    # print("MSE : ", MSE, "  |   RMSE : ", RMSE)
-
-    # return regressor, RMSE
+    return regressor, RMSE
 
 def create_all_models():
+    """
+    Creates a neural network model for each post town and saves it as a pickle file
+    """
+
     directory = "DB Outputs"
-    df = pd.DataFrame(columns = ['Name', 'Train RMSE', 'Test RMSE'])
+    df = pd.DataFrame(columns = ['Name', 'Test RMSE'])
+
+    # create pickle model for each CSV file in directory
     for file in os.listdir(directory):
         print("Working on file: " + file)
+
+        # if model exists then skip it
         if ".csv" not in file or (file.replace(".csv", "") + ".pickle") in os.listdir("Pickle Models"):
             print("Model already exists, skipping file: " + file)
             continue
+
+        # create model
         regressor, error = train_model(directory + '/' + file)
+
+        # save model as pickle file
         name = "Pickle Models/" + file.replace(".csv", "") + ".pickle"
         save_regressor(regressor, name)
+
+        # save the error in another file
         df = df.append({'Name': file.replace(".csv", ""), 'Test RMSE': error}, ignore_index=True)
         print(file + "\t" +  str(error) + "\n")
+
     df.to_csv("Pickle Model Errors.csv", index=False)
 
 def make_one_prediction(filename=None, inputs={}):
+    """
+    Load a pickle model and use it to make one prediction based on the inputs given
+    Returns the predicted energy efficiency score on a scale of 0 to 100
+    """
+
+    # load the model
     regressor = load_regressor(filename)
+
+    # prepare the input 
     used_cols = ['PROPERTY_TYPE', 'MAINS_GAS_FLAG', 'GLAZED_TYPE', 'NUMBER_HABITABLE_ROOMS', 'LOW_ENERGY_LIGHTING', 'HOTWATER_DESCRIPTION', 'FLOOR_DESCRIPTION', 'WALLS_DESCRIPTION', 'ROOF_DESCRIPTION', 'MAINHEAT_DESCRIPTION', 'MAINHEATCONT_DESCRIPTION', 'MAIN_FUEL', 'SOLAR_WATER_HEATING_FLAG', 'CONSTRUCTION_AGE_BAND']
     df = pd.DataFrame(columns=used_cols)
     df = df.append(new_row, ignore_index=True)
+
+    # run the model and return the result
     result = regressor.predict(df)
     print(result[0][0])
     return result[0][0]
 
 if __name__ == "__main__":
-    # train_model()
-    # create_all_models()
+    """
+    Takes a filename and property data as json input and loads the model from the to make one prediction
+    """
     file = sys.argv[1]
     new_row = json.loads(sys.argv[2])
-    # new_row = {'PROPERTY_TYPE': 'House', 'MAINS_GAS_FLAG': 'True', 'GLAZED_TYPE': 'Double', 'NUMBER_HABITABLE_ROOMS': 4, 'LOW_ENERGY_LIGHTING': 100, 'HOTWATER_DESCRIPTION': 'From main', 'FLOOR_DESCRIPTION': 'Suspended', 'WALLS_DESCRIPTION': 'False', 'ROOF_DESCRIPTION': 'Other', 'MAINHEAT_DESCRIPTION': 'Boiler', 'MAINHEATCONT_DESCRIPTION': 'True', 'MAIN_FUEL': 'Mains gas', 'SOLAR_WATER_HEATING_FLAG': 'False', 'CONSTRUCTION_AGE_BAND': '1900-1929'}
     to_return = make_one_prediction(file, new_row)

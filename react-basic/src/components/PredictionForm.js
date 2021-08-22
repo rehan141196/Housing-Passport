@@ -2,16 +2,11 @@ import React, { useState } from "react";
 import axios from 'axios';
 import '../index.css';
 
-// import { useAuth0 } from "@auth0/auth0-react";
-
 export function PredictionForm(props) {
-  // const [name, setName] = useState("");
-  // const [address, setAddress] = useState("");
+
+  // Define Hooks
   const [posttown, setPosttown] = useState("");
-  // const [postcode, setPostcode] = useState("");
-  // const [residential, setResidential] = useState("");
   const [type, setType] = useState("");
-  // const [epc, setEpc] = useState("");
   const [age, setAge] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [floortype, setFloortype] = useState("");
@@ -29,13 +24,6 @@ export function PredictionForm(props) {
   const [gasconnection, setGasconnection] = useState("");
   const [hotwatertype, setHotwatertype] = useState("");
   const [lowenergylightpct, setLowenergylightpct] = useState("");
-  // const [avgtemp, setAvgtemp] = useState("");
-  // const [smartmeters, setSmartmeters] = useState("");
-  // const [smartmeterids, setSmartmeterids] = useState("");
-  // const [photovoltaics, setPhotovoltaics] = useState("");
-
-  // const { user } = useAuth0();
-  // const { getAccessTokenSilently } = useAuth0();
 
   const [result, setResult] = useState(null);
   
@@ -43,14 +31,10 @@ export function PredictionForm(props) {
   const handleSubmit = async (evt) => {
       evt.preventDefault();
 
+      // Collect the data to be sent in the body
       var bodyFormData = new FormData();
-      // bodyFormData.append('username', user['email']);
-      // bodyFormData.append('address', address);
       bodyFormData.append('post_town', posttown);
-      // bodyFormData.append('postcode', postcode);
-      // bodyFormData.append('residential', residential);
       bodyFormData.append('type', type);
-      // bodyFormData.append('EPC_cert_key', epc);
       bodyFormData.append('age', age);
       bodyFormData.append('bedrooms', bedrooms);
       bodyFormData.append('floor_type', floortype);
@@ -68,19 +52,9 @@ export function PredictionForm(props) {
       bodyFormData.append('gas_connection', gasconnection);
       bodyFormData.append('hotwater_type', hotwatertype);
       bodyFormData.append('low_energy_light_pct', lowenergylightpct);
-      // bodyFormData.append('average_temp', avgtemp);
-      // bodyFormData.append('smart_meters', smartmeters);
-      // bodyFormData.append('smart_meter_ids', smartmeterids);
-      // bodyFormData.append('photovoltaics', photovoltaics);
-      // alert(`Submitting Name ${name}`);
 
-      // const token = await getAccessTokenSilently();
-      // console.log(token);
-
-      axios.post('http://127.0.0.1:5000/api/predictefficiency', bodyFormData, {headers: {
-          // Content-Type: `multipart/form-data`,
-          // Authorization: `Bearer ${token}`,
-        }})
+      // Send the request for prediction to back end
+      axios.post('http://127.0.0.1:5000/api/predictefficiency', bodyFormData)
       .then((response) => {
           console.log("Post Response")
           console.log(response);
@@ -91,22 +65,6 @@ export function PredictionForm(props) {
   return (
     <>
     <form onSubmit={handleSubmit}>
-{/*      <label>
-        Username:
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-      </label>*/}
-{/*      <label>
-        Address:
-        <input
-          type="text"
-          value={address}
-          onChange={e => setAddress(e.target.value)}
-        />
-      </label>*/}
       <label>
         Post Town:
         <input
@@ -115,22 +73,6 @@ export function PredictionForm(props) {
           onChange={e => setPosttown(e.target.value)}
         />
       </label>
-{/*      <label>
-        Post Code:
-        <input
-          type="text"
-          value={postcode}
-          onChange={e => setPostcode(e.target.value)}
-        />
-      </label>*/}
-{/*      <label>
-        Residential:
-        <select value={residential} onChange={e => setResidential(e.target.value)}>
-            <option value="">Select</option>
-            <option value="True">Yes</option>
-            <option value="False">No</option>
-        </select>
-      </label>*/}
       <label>
         Type:
         <select value={type} onChange={e => setType(e.target.value)}>
@@ -142,14 +84,6 @@ export function PredictionForm(props) {
             <option value="Park home">Park Home</option>
         </select>
       </label>
-{/*      <label>
-        EPC Certificate Key:
-        <input
-          type="text"
-          value={epc}
-          onChange={e => setEpc(e.target.value)}
-        />
-      </label>*/}
       <label>
         Age:
         <select value={age} onChange={e => setAge(e.target.value)}>
@@ -326,38 +260,6 @@ export function PredictionForm(props) {
           onChange={e => setLowenergylightpct(e.target.value)}
         />
       </label>
-{/*      <label>
-        Average Temperature:
-        <input
-          type="text"
-          value={avgtemp}
-          onChange={e => setAvgtemp(e.target.value)}
-        />
-      </label>
-      <label>
-        Number of Smart Meters:
-        <input
-          type="text"
-          value={smartmeters}
-          onChange={e => setSmartmeters(e.target.value)}
-        />
-      </label>
-      <label>
-        Smart Meter IDs:
-        <input
-          type="text"
-          value={smartmeterids}
-          onChange={e => setSmartmeterids(e.target.value)}
-        />
-      </label>
-      <label>
-        Photovoltaics:
-        <select value={photovoltaics} onChange={e => setPhotovoltaics(e.target.value)}>
-            <option value="">Select</option>
-            <option value="True">Yes</option>
-            <option value="False">No</option>
-        </select>
-      </label>*/}
       <input type="submit" value="Submit" />
     </form>
     <div className="result">

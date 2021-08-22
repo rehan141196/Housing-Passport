@@ -5,7 +5,8 @@ import '../index.css';
 import { useAuth0 } from "@auth0/auth0-react";
 
 export function PostForm(props) {
-  // const [name, setName] = useState("");
+
+  // Define the Hooks
   const [address, setAddress] = useState("");
   const [posttown, setPosttown] = useState("");
   const [postcode, setPostcode] = useState("");
@@ -37,7 +38,7 @@ export function PostForm(props) {
   const { user } = useAuth0();
   const { getAccessTokenSilently } = useAuth0();
   
-  
+  // Add the data from the fields into the body of the request
   const handleSubmit = async (evt) => {
       evt.preventDefault();
 
@@ -70,13 +71,12 @@ export function PostForm(props) {
       bodyFormData.append('smart_meters', smartmeters);
       bodyFormData.append('smart_meter_ids', smartmeterids);
       bodyFormData.append('photovoltaics', photovoltaics);
-      // alert(`Submitting Name ${name}`);
 
+      // Get access token from Auth0 for the request to back end
       const token = await getAccessTokenSilently();
       console.log(token);
 
       axios.post('http://127.0.0.1:5000/api/addrecord', bodyFormData, {headers: {
-          // Content-Type: `multipart/form-data`,
           Authorization: `Bearer ${token}`,
         }})
       .then((response) => {
@@ -88,14 +88,6 @@ export function PostForm(props) {
   return (
     <>
     <form onSubmit={handleSubmit}>
-{/*      <label>
-        Username:
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-      </label>*/}
       <label>
         Address:
         <input
