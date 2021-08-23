@@ -172,6 +172,7 @@ export function PostForm(props) {
             <option value="Suspended">Suspended</option>
             <option value="Solid">Solid</option>
             <option value="(another dwelling below)">Another Dwelling Below</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
@@ -190,6 +191,7 @@ export function PostForm(props) {
             <option value="Pitched">Pitched</option>
             <option value="Flat">Flat</option>
             <option value="(another dwelling above)">Another Dwelling Above</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
@@ -210,6 +212,7 @@ export function PostForm(props) {
             <option value="Timber">Timber</option>
             <option value="Sandstone">Sandstone</option>
             <option value="System built">System Built</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
@@ -268,6 +271,7 @@ export function PostForm(props) {
             <option value="Heat pump">Heat Pump</option>
             <option value="Underfloor">Underfloor</option>
             <option value="No system">No System</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
@@ -285,6 +289,7 @@ export function PostForm(props) {
             <option value="Community heating schemes">Community Heating Schemes</option>
             <option value="No heating">No Heating</option>
             <option value="Unknown">Unknown</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
@@ -305,6 +310,7 @@ export function PostForm(props) {
             <option value="Gas">Gas</option>
             <option value="Secondary system">Secondary System</option>
             <option value="No system">No System</option>
+            <option value="Other">Other</option>
         </select>
       </label>
       <label>
