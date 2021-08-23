@@ -25,5 +25,5 @@ https://epc.opendatacommunities.org/
 
 ## Acknowledgements
 
-The ML model is adapted from the project:
+The ML model takes inspiration from the project:
 https://gitlab.doc.ic.ac.uk/lab2021_autumn/neural_networks_72

@@ -35,6 +35,9 @@ export function PostForm(props) {
   const [smartmeterids, setSmartmeterids] = useState("");
   const [photovoltaics, setPhotovoltaics] = useState("");
 
+  const [result, setResult] = useState(null);
+  const [flags, setFlags] = useState(null);
+
   const { user } = useAuth0();
   const { getAccessTokenSilently } = useAuth0();
   
@@ -82,6 +85,10 @@ export function PostForm(props) {
       .then((response) => {
           console.log("Post Response")
           console.log(response);
+          setResult(response.data['response']);
+          if (response.data['mismatch-flags']) {
+            setFlags(response.data['mismatch-flags']);
+          }
       });
   	}
 
@@ -355,6 +362,12 @@ export function PostForm(props) {
       </label>
       <input type="submit" value="Submit" />
     </form>
+    <p>Response: {result}</p>
+    <p>
+    Flags: {flags && Object.entries(flags).map(([key, value]) => {
+                return <li key={key}>{key}: {value.toString()}</li> 
+              })}
+    </p>
     </>
   );
 }
