@@ -8,10 +8,14 @@ export function GetForm(props) {
 
   // Define Hooks
   const [homes, setHomes] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [result, setResult] = useState(null);
   const { user } = useAuth0();
 
   // Get access token from Auth0 for back end request
   const { getAccessTokenSilently } = useAuth0();
+
+  // Get homes for a user
   const handleSubmitUsername = async (evt) => {
       evt.preventDefault();
       const token = await getAccessTokenSilently();
@@ -27,26 +31,50 @@ export function GetForm(props) {
           if (response.data["response"] !== "No data found for this user") {
             setHomes(response.data);
           }
+          setResult(response.data['response']);
         });
   }
+
+  // Delete home for given user and address
+  const handleDelete = async (evt) => {
+      evt.preventDefault();
+
+      // Collect the data to be sent in the body
+      var bodyFormData = new FormData();
+      bodyFormData.append('address', address);
+      bodyFormData.append('username', user['email']);
+
+      const token = await getAccessTokenSilently();
+      console.log(token);
+
+      axios.post('http://127.0.0.1:5000/api/deleterecord', bodyFormData, {headers: {
+          Authorization: `Bearer ${token}`,
+        }})
+      .then((response) => {
+          console.log("Post Response")
+          console.log(response);
+          setResult(response.data['response']);
+      });
+    }
 
   return (
     <>
     <form onSubmit={handleSubmitUsername}>
       <input type="submit" value="Get Homes" />
     </form>
-    {/*<form onSubmit={handleSubmitAddress}>
+    <form onSubmit={handleDelete}>
       <label>
-        Address:
+        Address To Remove:
         <input
           type="text"
           value={address}
           onChange={e => setAddress(e.target.value)}
         />
       </label>
-      <input type="submit" value="Submit" />
-    </form>*/}
+      <input type="submit" value="Delete Home" />
+    </form>
     <p>User: {user && user['email']}</p>
+    <p>Response: {result}</p>
 
     <div className="homes">
           <div className="details">
