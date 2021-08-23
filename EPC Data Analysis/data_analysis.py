@@ -7,13 +7,6 @@ global_current_rating = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0,
 global_potential_rating = {"A": 0, "B": 0, "C": 0, "D": 0, "E": 0, "F": 0, "G": 0, "INVALID!": 0}
 values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'INVALID!']
 
-# list_of_files = ["testcerts1.csv", "testcerts2.csv"]
-
-# list_of_files = [
-# "domestic-E06000001-Hartlepool/certificates.csv",
-# "domestic-E06000002-Middlesbrough/certificates.csv",
-# "domestic-E06000003-Redcar-and-Cleveland/certificates.csv"]
-
 list_of_files = [
 "domestic-E06000001-Hartlepool/certificates.csv",
 "domestic-E06000002-Middlesbrough/certificates.csv",
