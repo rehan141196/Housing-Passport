@@ -49,9 +49,10 @@ def getrecord():
         return jsonify({"response": "No data found for this user"})
 
     # convert results to string
-    result = response['Items'][0]
+    result = response['Items']
     for item in result:
-        result[item] = str(result[item])
+        for key in item:
+            item[key] = str(item[key])
 
     return jsonify({"response": "Data found for user", "data": result})
 

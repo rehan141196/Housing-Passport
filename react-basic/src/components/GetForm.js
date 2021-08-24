@@ -29,7 +29,7 @@ export function GetForm(props) {
           console.log("GET Response")
           console.log(response.data);
           if (response.data["response"] !== "No data found for this user") {
-            setHomes(response.data);
+            setHomes(response.data['data']);
           }
           setResult(response.data['response']);
         });
@@ -47,14 +47,18 @@ export function GetForm(props) {
       const token = await getAccessTokenSilently();
       console.log(token);
 
+      setHomes(null);
+
+      // send request to delete property
       axios.post('http://127.0.0.1:5000/api/deleterecord', bodyFormData, {headers: {
           Authorization: `Bearer ${token}`,
         }})
       .then((response) => {
-          console.log("Post Response")
+          console.log("POST Response")
           console.log(response);
           setResult(response.data['response']);
       });
+      setAddress("");
     }
 
   return (
@@ -77,36 +81,40 @@ export function GetForm(props) {
     <p>Response: {result}</p>
 
     <div className="homes">
-          <div className="details">
-                  <p>Username: {homes && homes['data']['username']}</p>
-                  <p>Address: {homes && homes['data']['address']}</p>
-                  <p>Post Town: {homes && homes['data']['post_town']}</p>
-                  <p>Post Code: {homes && homes['data']['postcode']}</p>
-                  <p>Residential: {homes && homes['data']['residential']}</p>
-                  <p>Type: {homes && homes['data']['type']}</p>
-                  <p>EPC: {homes && homes['data']['EPC_cert_key']}</p>
-                  <p>Age: {homes && homes['data']['age']}</p>
-                  <p>Bedrooms: {homes && homes['data']['bedrooms']}</p>
-                  <p>Floor Type: {homes && homes['data']['floor_type']}</p>
-                  <p>Floor Insulation: {homes && homes['data']['floor_insulation']}</p>
-                  <p>Roof Type: {homes && homes['data']['roof_type']}</p>
-                  <p>Roof Insulation: {homes && homes['data']['roof_insulation']}</p>
-                  <p>Wall Type: {homes && homes['data']['wall_type']}</p>
-                  <p>Wall Insulation: {homes && homes['data']['wall_insulation']}</p>
-                  <p>Glaze Type: {homes && homes['data']['glaze_type']}</p>
-                  <p>Solar Water Heating: {homes && homes['data']['solar_water_heating']}</p>
-                  <p>Solar Panel Area: {homes && homes['data']['solar_panel_area']}</p>
-                  <p>Thermostat: {homes && homes['data']['thermostat']}</p>
-                  <p>Heating Type: {homes && homes['data']['heating_type']}</p>
-                  <p>Heating Fuel: {homes && homes['data']['heating_fuel']}</p>
-                  <p>Gas Connection: {homes && homes['data']['gas_connection']}</p>
-                  <p>Hotwater Type: {homes && homes['data']['hotwater_type']}</p>
-                  <p>Low Energy Light Percentage: {homes && homes['data']['low_energy_light_pct']}%</p>
-                  <p>Average Temperature: {homes && homes['data']['average_temp']}</p>
-                  <p>Number of Smart Meters: {homes && homes['data']['smart_meters']}</p>
-                  <p>Smart Meter IDs: {homes && homes['data']['smart_meter_ids']}</p>
-                  <p>Photovoltaics: {homes && homes['data']['photovoltaics']}</p>     
-          </div>
+      <ul>
+        {homes && homes.map(d => (<ul key={d.address}>
+          Property Details:
+          <p>
+              <li>Username: {d.username}</li>
+              <li>Address: {d.address}</li>
+              <li>Post Town: {d.post_town}</li>
+              <li>Post Code: {d.postcode}</li>
+              <li>Residential: {d.residential}</li>
+              <li>Type: {d.type}</li>
+              <li>EPC: {d.EPC_cert_key}</li>
+              <li>Age: {d.age}</li>
+              <li>Bedrooms: {d.bedrooms}</li>
+              <li>Floor Type: {d.floor_type}</li>
+              <li>Floor Insulation: {d.floor_insulation}</li>
+              <li>Roof Type: {d.roof_type}</li>
+              <li>Roof Insulation: {d.roof_insulation}</li>
+              <li>Wall Type: {d.wall_type}</li>
+              <li>Wall Insulation: {d.wall_insulation}</li>
+              <li>Glaze Type: {d.glaze_type}</li>
+              <li>Solar Water Heating: {d.solar_water_heating}</li>
+              <li>Solar Panel Area: {d.solar_panel_area}</li>
+              <li>Thermostat: {d.thermostat}</li>
+              <li>Heating Type: {d.heating_type}</li>
+              <li>Heating Fuel: {d.heating_fuel}</li>
+              <li>Gas Connection: {d.gas_connection}</li>
+              <li>Hotwater Type: {d.hotwater_type}</li>
+              <li>Low Energy Light Percentage: {d.low_energy_light_pct}%</li>
+              <li>Average Temperature: {d.average_temp}</li>
+              <li>Number of Smart Meters: {d.smart_meters}</li>
+              <li>Smart Meter IDs: {d.smart_meter_ids}</li>
+              <li>Photovoltaics: {d.photovoltaics}</li>
+            </p></ul>))} 
+      </ul>
     </div>
     </>
   );
