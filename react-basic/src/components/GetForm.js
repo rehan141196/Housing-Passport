@@ -63,9 +63,11 @@ export function GetForm(props) {
 
   return (
     <>
+    <br />
     <form onSubmit={handleSubmitUsername}>
       <input type="submit" value="Get Homes" />
     </form>
+    <br />
     <form onSubmit={handleDelete}>
       <label>
         Address To Remove:

@@ -64,17 +64,19 @@ export function PredictionForm(props) {
 
   return (
     <>
+    <br />
     <form onSubmit={handleSubmit}>
       <label>
-        Post Town:
+        Post Town:&ensp;
         <input
           type="text"
           value={posttown}
           onChange={e => setPosttown(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Type:
+        Type:&ensp;
         <select value={type} onChange={e => setType(e.target.value)}>
             <option value="">Select</option>
             <option value="Flat">Flat</option>
@@ -85,7 +87,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Age:
+        &emsp;Age:&ensp;
         <select value={age} onChange={e => setAge(e.target.value)}>
             <option value="">Select</option>
             <option value="before 1900">Before 1900</option>
@@ -103,15 +105,16 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Bedrooms:
+        &emsp;Bedrooms:&ensp;
         <input
           type="text"
           value={bedrooms}
           onChange={e => setBedrooms(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Floor Type:
+        Floor Type:&ensp;
         <select value={floortype} onChange={e => setFloortype(e.target.value)}>
             <option value="">Select</option>
             <option value="Suspended">Suspended</option>
@@ -120,7 +123,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Floor Insulation:
+        &emsp;Floor Insulation:&ensp;
         <select value={floorinsulation} onChange={e => setFloorinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -128,8 +131,9 @@ export function PredictionForm(props) {
             <option value="Limited">Limited</option>
         </select>
       </label>
-      <label>
-        Roof Type:
+      <label><br />
+      <br />
+        Roof Type:&ensp;
         <select value={rooftype} onChange={e => setRooftype(e.target.value)}>
             <option value="">Select</option>
             <option value="Pitched">Pitched</option>
@@ -138,7 +142,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Roof Insulation:
+        &emsp;Roof Insulation:&ensp;
         <select value={roofinsulation} onChange={e => setRoofinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -146,8 +150,9 @@ export function PredictionForm(props) {
             <option value="Limited">Limited</option>
         </select>
       </label>
-      <label>
-        Wall Type:
+      <label><br />
+      <br />
+        Wall Type:&ensp;
         <select value={walltype} onChange={e => setWalltype(e.target.value)}>
             <option value="">Select</option>
             <option value="Cavity">Cavity</option>
@@ -158,7 +163,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Wall Insulation:
+        &emsp;Wall Insulation:&ensp;
         <select value={wallinsulation} onChange={e => setWallinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -166,8 +171,9 @@ export function PredictionForm(props) {
             <option value="Partial">Partial</option>
         </select>
       </label>
-      <label>
-        Glaze Type:
+      <label><br />
+      <br />
+        Glaze Type:&ensp;
         <select value={glazetype} onChange={e => setGlazetype(e.target.value)}>
             <option value="">Select</option>
             <option value="Single">Single</option>
@@ -176,8 +182,9 @@ export function PredictionForm(props) {
             <option value="Unknown">Unknown</option>
         </select>
       </label>
-      <label>
-        Solar Water Heating:
+      <label><br />
+      <br />
+        Solar Water Heating:&ensp;
         <select value={solarwaterheating} onChange={e => setSolarwaterheating(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -185,15 +192,16 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Solar Panel Area:
+        &emsp;Solar Panel Area:&ensp;
         <select value={solarpanelarea} onChange={e => setSolarpanelarea(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
       </label>
-      <label>
-        Thermostat:
+      <label><br />
+      <br />
+        Thermostat:&ensp;
         <select value={thermostat} onChange={e => setThermostat(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -202,7 +210,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Heating Type:
+        &emsp;Heating Type:&ensp;
         <select value={heatingtype} onChange={e => setHeatingtype(e.target.value)}>
             <option value="">Select</option>
             <option value="Boiler">Boiler</option>
@@ -216,7 +224,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Heating Fuel:
+        &emsp;Heating Fuel:&ensp;
         <select value={heatingfuel} onChange={e => setHeatingfuel(e.target.value)}>
             <option value="">Select</option>
             <option value="Mains gas">Mains Gas</option>
@@ -232,8 +240,9 @@ export function PredictionForm(props) {
             <option value="Unknown">Unknown</option>
         </select>
       </label>
-      <label>
-        Gas Connection:
+      <label><br />
+      <br />
+        Gas Connection:&ensp;
         <select value={gasconnection} onChange={e => setGasconnection(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -241,7 +250,7 @@ export function PredictionForm(props) {
         </select>
       </label>
       <label>
-        Hotwater Type:
+        &emsp;Hotwater Type:&ensp;
         <select value={hotwatertype} onChange={e => setHotwatertype(e.target.value)}>
             <option value="">Select</option>
             <option value="From main">From Main</option>
@@ -252,14 +261,16 @@ export function PredictionForm(props) {
             <option value="No system">No System</option>
         </select>
       </label>
-      <label>
-        Low Energy Light Percentage:
+      <label><br />
+      <br />
+        Low Energy Light Percentage:&ensp;
         <input
           type="text"
           value={lowenergylightpct}
           onChange={e => setLowenergylightpct(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <input type="submit" value="Submit" />
     </form>
     <div className="result">

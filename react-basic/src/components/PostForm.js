@@ -94,17 +94,19 @@ export function PostForm(props) {
 
   return (
     <>
+    <br />
     <form onSubmit={handleSubmit}>
       <label>
-        Address:
+        Address:&ensp;
         <input
           type="text"
           value={address}
           onChange={e => setAddress(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Post Town:
+        Post Town:&ensp;
         <input
           type="text"
           value={posttown}
@@ -112,15 +114,16 @@ export function PostForm(props) {
         />
       </label>
       <label>
-        Post Code:
+        &emsp;Post Code:&ensp;
         <input
           type="text"
           value={postcode}
           onChange={e => setPostcode(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Residential:
+        Residential:&ensp;
         <select value={residential} onChange={e => setResidential(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -128,7 +131,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Type:
+        &emsp;Type:&ensp;
         <select value={type} onChange={e => setType(e.target.value)}>
             <option value="">Select</option>
             <option value="Flat">Flat</option>
@@ -138,16 +141,18 @@ export function PostForm(props) {
             <option value="Park home">Park Home</option>
         </select>
       </label>
-      <label>
-        EPC Certificate Key:
+      <label><br />
+      <br />
+        EPC Certificate Key:&ensp;
         <input
           type="text"
           value={epc}
           onChange={e => setEpc(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Age:
+        Age:&ensp;
         <select value={age} onChange={e => setAge(e.target.value)}>
             <option value="">Select</option>
             <option value="before 1900">Before 1900</option>
@@ -165,15 +170,16 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Bedrooms:
+        &emsp;Bedrooms:&ensp;
         <input
           type="text"
           value={bedrooms}
           onChange={e => setBedrooms(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <label>
-        Floor Type:
+        Floor Type:&ensp;
         <select value={floortype} onChange={e => setFloortype(e.target.value)}>
             <option value="">Select</option>
             <option value="Suspended">Suspended</option>
@@ -183,7 +189,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Floor Insulation:
+        &emsp;Floor Insulation:&ensp;
         <select value={floorinsulation} onChange={e => setFloorinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -191,8 +197,9 @@ export function PostForm(props) {
             <option value="Limited">Limited</option>
         </select>
       </label>
-      <label>
-        Roof Type:
+      <label><br />
+      <br />
+        Roof Type:&ensp;
         <select value={rooftype} onChange={e => setRooftype(e.target.value)}>
             <option value="">Select</option>
             <option value="Pitched">Pitched</option>
@@ -202,7 +209,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Roof Insulation:
+        &emsp;Roof Insulation:&ensp;
         <select value={roofinsulation} onChange={e => setRoofinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -210,8 +217,9 @@ export function PostForm(props) {
             <option value="Limited">Limited</option>
         </select>
       </label>
-      <label>
-        Wall Type:
+      <label><br />
+      <br />
+        Wall Type:&ensp;
         <select value={walltype} onChange={e => setWalltype(e.target.value)}>
             <option value="">Select</option>
             <option value="Cavity">Cavity</option>
@@ -223,7 +231,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Wall Insulation:
+        &emsp;Wall Insulation:&ensp;
         <select value={wallinsulation} onChange={e => setWallinsulation(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -231,8 +239,9 @@ export function PostForm(props) {
             <option value="Partial">Partial</option>
         </select>
       </label>
-      <label>
-        Glaze Type:
+      <label><br />
+      <br />
+        Glaze Type:&ensp;
         <select value={glazetype} onChange={e => setGlazetype(e.target.value)}>
             <option value="">Select</option>
             <option value="Single">Single</option>
@@ -240,9 +249,10 @@ export function PostForm(props) {
             <option value="Triple">Triple</option>
             <option value="Unknown">Unknown</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <label>
-        Solar Water Heating:
+        Solar Water Heating:&ensp;
         <select value={solarwaterheating} onChange={e => setSolarwaterheating(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -250,15 +260,16 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Solar Panel Area:
+        &emsp;Solar Panel Area:&ensp;
         <select value={solarpanelarea} onChange={e => setSolarpanelarea(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <label>
-        Thermostat:
+        Thermostat:&ensp;
         <select value={thermostat} onChange={e => setThermostat(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -267,7 +278,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Heating Type:
+        &emsp;Heating Type:&ensp;
         <select value={heatingtype} onChange={e => setHeatingtype(e.target.value)}>
             <option value="">Select</option>
             <option value="Boiler">Boiler</option>
@@ -282,7 +293,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Heating Fuel:
+        &emsp;Heating Fuel:&ensp;
         <select value={heatingfuel} onChange={e => setHeatingfuel(e.target.value)}>
             <option value="">Select</option>
             <option value="Mains gas">Mains Gas</option>
@@ -298,9 +309,10 @@ export function PostForm(props) {
             <option value="Unknown">Unknown</option>
             <option value="Other">Other</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <label>
-        Gas Connection:
+        Gas Connection:&ensp;
         <select value={gasconnection} onChange={e => setGasconnection(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
@@ -308,7 +320,7 @@ export function PostForm(props) {
         </select>
       </label>
       <label>
-        Hotwater Type:
+        &emsp;Hotwater Type:&ensp;
         <select value={hotwatertype} onChange={e => setHotwatertype(e.target.value)}>
             <option value="">Select</option>
             <option value="From main">From Main</option>
@@ -319,9 +331,10 @@ export function PostForm(props) {
             <option value="No system">No System</option>
             <option value="Other">Other</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <label>
-        Low Energy Light Percentage:
+        Low Energy Light Percentage:&ensp;
         <input
           type="text"
           value={lowenergylightpct}
@@ -329,15 +342,16 @@ export function PostForm(props) {
         />
       </label>
       <label>
-        Average Temperature:
+        &emsp;Average Temperature:&ensp;
         <input
           type="text"
           value={avgtemp}
           onChange={e => setAvgtemp(e.target.value)}
         />
       </label>
-      <label>
-        Number of Smart Meters:
+      <label><br />
+      <br />
+        Number of Smart Meters:&ensp;
         <input
           type="text"
           value={smartmeters}
@@ -345,23 +359,26 @@ export function PostForm(props) {
         />
       </label>
       <label>
-        Smart Meter IDs:
+        &emsp;Smart Meter IDs:&ensp;
         <input
           type="text"
           value={smartmeterids}
           onChange={e => setSmartmeterids(e.target.value)}
         />
       </label>
-      <label>
-        Photovoltaics:
+      <label><br />
+      <br />
+        Photovoltaics:&ensp;
         <select value={photovoltaics} onChange={e => setPhotovoltaics(e.target.value)}>
             <option value="">Select</option>
             <option value="True">Yes</option>
             <option value="False">No</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <input type="submit" value="Submit" />
     </form>
+    <br />
     <p>Response: {result}</p>
     <p>
     Flags: {flags && Object.entries(flags).map(([key, value]) => {

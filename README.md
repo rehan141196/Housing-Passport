@@ -11,6 +11,7 @@ The dependencies are in the requirements.txt file. In addition to this, the mach
 ## Front end
 The front end is implemented in React.js. It is the react-basic file directory and can be run by running the command  
 
+npm install  
 npm start  
 
 ## ML Model

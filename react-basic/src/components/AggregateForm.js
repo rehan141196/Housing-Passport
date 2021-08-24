@@ -31,17 +31,19 @@ export function AggregateForm(props) {
 
   return (
     <>
+    <br />
     <form onSubmit={handleSubmit}>
       <label>
-        Post Town:
+        Post Town:&ensp;
         <input
           type="text"
           value={posttown}
           onChange={e => setPosttown(e.target.value)}
         />
       </label>
-      <label>
-        Field:
+      <label><br />
+      <br />
+        Field:&ensp;
         <select value={field} onChange={e => setField(e.target.value)}>
             <option value="type">Type</option>
             <option value="age">Age</option>
@@ -61,7 +63,8 @@ export function AggregateForm(props) {
             <option value="hotwater_type">Hotwater Type</option>
             <option value="photovoltaics">Photovoltaics</option>
         </select>
-      </label>
+      </label><br />
+      <br />
       <input type="submit" value="Submit" />
     </form>
     <div className="result">
