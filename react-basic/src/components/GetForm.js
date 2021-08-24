@@ -70,15 +70,16 @@ export function GetForm(props) {
     <br />
     <form onSubmit={handleDelete}>
       <label>
-        Address To Remove:
+        Address To Remove:&ensp;
         <input
           type="text"
           value={address}
           onChange={e => setAddress(e.target.value)}
         />
-      </label>
+      </label><br />
+      <br />
       <input type="submit" value="Delete Home" />
-    </form>
+    </form><br />
     <p>User: {user && user['email']}</p>
     <p>Response: {result}</p>
 

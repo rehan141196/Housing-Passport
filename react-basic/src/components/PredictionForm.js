@@ -25,6 +25,7 @@ export function PredictionForm(props) {
   const [hotwatertype, setHotwatertype] = useState("");
   const [lowenergylightpct, setLowenergylightpct] = useState("");
 
+  const [response, setResponse] = useState(null);
   const [result, setResult] = useState(null);
   
   
@@ -58,7 +59,8 @@ export function PredictionForm(props) {
       .then((response) => {
           console.log("Post Response")
           console.log(response);
-          setResult(response.data);
+          setResponse(response.data['response']);
+          setResult(response.data['efficiency_score']);
       });
   	}
 
@@ -274,11 +276,8 @@ export function PredictionForm(props) {
       <input type="submit" value="Submit" />
     </form>
     <div className="result">
-      <ul>
-      {result && Object.entries(result).map(([key, value]) => {
-            return <li key={key}><b>{key}:</b> {value}</li> 
-          })}
-      </ul>
+    <p>Response: {response}</p>
+    <p>Predicted Energy Efficiency Score: {result}</p>
     </div>
     </>
   );

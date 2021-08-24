@@ -10,6 +10,7 @@ export function AggregateForm(props) {
   const [posttown, setPosttown] = useState("");
   const [field, setField] = useState("type");
   const [result, setResult] = useState(null);
+  const [response, setResponse] = useState(null);
 
   const { getAccessTokenSilently } = useAuth0();
   
@@ -18,14 +19,16 @@ export function AggregateForm(props) {
       evt.preventDefault();
       const token = await getAccessTokenSilently();
       console.log(token);
+
+      // Send request to backend with appropriate parameters
       axios.get('http://127.0.0.1:5000/api/aggregate/by_field?post_town=' + posttown.toUpperCase() + '&field=' + field, {headers: {
             Authorization: `Bearer ${token}`,
           }})
         .then((response) => {
           console.log("GET Response")
           console.log(response.data);
-          setResult(response.data);
-          setPosttown("");
+          setResponse(response.data['response']);
+          setResult(response.data['results']);
         });
   }
 
@@ -68,9 +71,12 @@ export function AggregateForm(props) {
       <input type="submit" value="Submit" />
     </form>
     <div className="result">
+    <p>Response: {response}</p>
+    <p>Homes in Post Town: {result && result['Homes in Post Town']}</p>
+    {result && delete result['Homes in Post Town']}
       <ul>
-      {result && Object.entries(result['results']).map(([key, value]) => {
-            return <li key={key}><b>{key}:</b> {value}</li> 
+      {result && Object.entries(result).map(([key, value]) => {
+            return <li key={key}>{key.replace(/\(|\)/g, '').slice(0,1).toUpperCase() + key.replace(/\(|\)/g, '').slice(1, key.length)}: {value}</li> 
           })}
       </ul>
     </div>

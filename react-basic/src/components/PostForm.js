@@ -79,6 +79,7 @@ export function PostForm(props) {
       const token = await getAccessTokenSilently();
       console.log(token);
 
+      // Send request to back end
       axios.post('http://127.0.0.1:5000/api/addrecord', bodyFormData, {headers: {
           Authorization: `Bearer ${token}`,
         }})
@@ -86,6 +87,7 @@ export function PostForm(props) {
           console.log("Post Response")
           console.log(response);
           setResult(response.data['response']);
+          setFlags(null);
           if (response.data['mismatch-flags']) {
             setFlags(response.data['mismatch-flags']);
           }
@@ -382,7 +384,7 @@ export function PostForm(props) {
     <p>Response: {result}</p>
     <p>
     Flags: {flags && Object.entries(flags).map(([key, value]) => {
-                return <li key={key}>{key}: {value.toString()}</li> 
+                return <li key={key}>{key.replace(/_/g, ' ')}: {value.toString().slice(0,1).toUpperCase() + value.toString().slice(1, value.length)}</li> 
               })}
     </p>
     </>
